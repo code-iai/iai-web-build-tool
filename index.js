@@ -14,37 +14,37 @@ const sourcemaps = require('gulp-sourcemaps');
 const reactify = require('reactify');
 const babel = require('gulp-babel');
 
-gulp.task('default', function() {
+gulp.task('default', () => {
     buildCSSMain(SRC_ROOT, BUILD_ROOT);
-    buildJSMain(SRC_ROOT+'/js/neemVisualizationTaskTree/neemVisualizationTaskTree.js', 'neemVisualizationTaskTree.js', BUILD_ROOT, true,true);
-    buildJSMain(SRC_ROOT+'/js/main/main.js', 'main.js', BUILD_ROOT, true,true);
+    buildJSMain(`${SRC_ROOT}/js/neemVisualizationTaskTree/neemVisualizationTaskTree.js`, 'neemVisualizationTaskTree.js', BUILD_ROOT, true, true);
+    buildJSMain(`${SRC_ROOT}/js/main/main.js`, 'main.js', BUILD_ROOT, true, true);
     moveIndexHTML(BUILD_ROOT);
 });
 
-gulp.task('debug', function () {
+gulp.task('debug', () => {
     buildCSSMain(SRC_ROOT, DEBUG_ROOT);
-    buildJSMain(SRC_ROOT+'/js/main/main.js', 'main.js', DEBUG_ROOT, true,false);
-    buildJSMain(SRC_ROOT+'/js/neemVisualizationTaskTree/neemVisualizationTaskTree.js', 'neemVisualizationTaskTree.js', DEBUG_ROOT, true,false);
+    buildJSMain(`${SRC_ROOT}/js/main/main.js`, 'main.js', DEBUG_ROOT, true, false);
+    buildJSMain(`${SRC_ROOT}/js/neemVisualizationTaskTree/neemVisualizationTaskTree.js`, 'neemVisualizationTaskTree.js', DEBUG_ROOT, true, false);
     moveIndexHTML(DEBUG_ROOT);
 });
 
-function buildCSSMain(src, dest){
-    gulp.src(src+'/styles/neemVisualizationTaskTree.scss')
+function buildCSSMain(src, dest) {
+    gulp.src(`${src}/styles/neemVisualizationTaskTree.scss`)
         .pipe(sass())
-        .pipe(cleanCSS({compatibility: 'ie8'}))
+        .pipe(cleanCSS({ compatibility: 'ie8' }))
         .pipe(gulp.dest(dest));
 }
 
 function buildJSMain(pathToSrcMainJs, outputName, dest, useBabel, useUglify) {
     let b = resolveJSRequireDependencies(pathToSrcMainJs, outputName);
 
-    if(useBabel){
+    if (useBabel) {
         b = b.pipe(babel({
-            presets: ['env']
+            presets: ['env'],
         }));
     }
 
-    if(useUglify){
+    if (useUglify) {
         b = b.pipe(uglify());
     }
 
@@ -53,12 +53,12 @@ function buildJSMain(pathToSrcMainJs, outputName, dest, useBabel, useUglify) {
         .pipe(gulp.dest(dest));
 }
 
-function resolveJSRequireDependencies(pathToMainJs, outputName){
-    let b = browserify({
+function resolveJSRequireDependencies(pathToMainJs, outputName) {
+    const b = browserify({
         entries: pathToMainJs,
         debug: true,
         // defining transforms here will avoid crashing your stream
-        transform: [reactify]
+        transform: [reactify],
     });
     b.external('d3');
     b.external('jquery');
@@ -67,17 +67,17 @@ function resolveJSRequireDependencies(pathToMainJs, outputName){
     return b.bundle()
         .pipe(source(outputName))
         .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true}));
+        .pipe(sourcemaps.init({ loadMaps: true }));
 }
 
-function moveIndexHTML(dest){
+function moveIndexHTML(dest) {
     gulp.src('src/index.html')
         .pipe(gulp.dest(dest));
 }
 
 module.exports = {
-    SRC : SRC_ROOT,
-    moveHtml : moveIndexHTML,
-    buildCssMain : buildCSSMain,
-    buildJsMain : buildJSMain
+    SRC: SRC_ROOT,
+    moveHtml: moveIndexHTML,
+    buildCssMain: buildCSSMain,
+    buildJsMain: buildJSMain,
 };
