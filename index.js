@@ -1,6 +1,6 @@
 const SRC_ROOT = './src';
 const DEBUG_ROOT = './debug';
-var BUILD_ROOT = './build';
+const BUILD_ROOT = './build';
 
 const gulp = require('gulp');
 const sass = require('gulp-sass');
