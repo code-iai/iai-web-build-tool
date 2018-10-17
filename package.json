@@ -4,6 +4,8 @@
   "description": "Builder Tool for Web-Files of the Institute of Artificial Intelligence, University Bremen.",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint ",
+    "pretest": "npm run lint",
     "test": "jest"
   },
   "repository": {
