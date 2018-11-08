@@ -1,0 +1,10 @@
+$greenish-blue: #0cb28e;
+$reddish: #c60314;
+
+body{
+  background-color: $greenish-blue;
+  text-align: center;
+}
+
+@import "partial1";
+@import "partial2";
