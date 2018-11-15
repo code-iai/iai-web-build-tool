@@ -33,7 +33,9 @@ const buffer = require('vinyl-buffer');
 const fs = require('fs');
 const path = require('path');
 
-function buildHTMLMain(src, dest, data) {
+function buildHTMLMain(src, dest, {
+    data = {},
+} = {}) {
     return new Promise((resolve, reject) => {
         if (!fs.existsSync(src)) {
             reject(Error(`Source File ${src} does not exist.`));
@@ -47,16 +49,14 @@ function buildHTMLMain(src, dest, data) {
             .pipe(rename(htmlFile))
             .pipe(gulp.dest(dest))
             .on('finish', () => {
-                const name = path.basename(src, path.extname(src));
-                if (!fs.existsSync(`${dest}/${name}.html`)) {
-                    reject(Error('File wasn\'t created'));
-                }
                 resolve('File was created');
             });
     });
 }
 
-function buildCSSMain(src, dest, minify) {
+function buildCSSMain(src, dest, {
+    minify = false,
+} = {}) {
     return new Promise((resolve, reject) => {
         if (!fs.existsSync(src)) {
             reject(Error(`Source File ${src} does not exist.`));
@@ -72,22 +72,23 @@ function buildCSSMain(src, dest, minify) {
         c.on('error', log.error)
             .pipe(gulp.dest(dest))
             .on('finish', () => {
-                const name = path.basename(src, path.extname(src));
-                if (!fs.existsSync(`${dest}/${name}.css`)) {
-                    reject(Error('File wasn\'t created'));
-                }
                 resolve('File was created');
             });
     });
 }
 
-function resolveJSRequireDependencies(pathToMainJs, outputName) {
+function resolveJSRequireDependencies(src, {
+    outputName = '',
+    beStandalone = false,
+}) {
+    const standaloneName = (beStandalone && outputName) ? path.basename(outputName, '.js') : '';
+
     const b = browserify({
-        entries: pathToMainJs,
+        entries: src,
         debug: true,
         // defining transforms here will avoid crashing your stream
         transform: [reactify],
-        standalone: outputName,
+        standalone: standaloneName,
     });
 
     b.external('d3');
@@ -100,40 +101,39 @@ function resolveJSRequireDependencies(pathToMainJs, outputName) {
         .pipe(sourcemaps.init({ loadMaps: true }));
 }
 
-function buildJSMain(pathToSrcMainJs, dest, outputName, useBabel, useUglify) {
+function buildJSMain(src, dest, {
+    outputName = '',
+    useBabel = false,
+    useUglify = false,
+    beStandalone = false,
+} = {}) {
     return new Promise((resolve, reject) => {
-        if (fs.existsSync(pathToSrcMainJs)) {
-            const outputN = outputName || path.basename(pathToSrcMainJs);
+        if (fs.existsSync(src)) {
+            const outputN = outputName || path.basename(src);
 
-            let b = resolveJSRequireDependencies(pathToSrcMainJs, outputN);
+            let b = resolveJSRequireDependencies(src, {
+                outputName: outputN,
+                beStandalone,
+            });
 
-            if (useBabel) {
-                b.pipe(babel({
+            if (useBabel || useUglify) {
+                b = b.pipe(babel({
                     presets: ['env'],
                 }));
             }
 
             if (useUglify) {
-                b.pipe(babel({
-                    presets: ['env'],
-                }))
-                    .pipe(uglify());
+                b = b.pipe(uglify());
             }
 
-            b.pipe(rename(`${outputN}.js`))
+            b.on('error', log.error)
                 .pipe(sourcemaps.write('./'))
                 .pipe(gulp.dest(dest))
                 .on('finish', () => {
-                    if (!fs.existsSync(`${dest}/${outputN}.js`)) {
-                        reject(Error('File wasn\'t created'));
-                    }
-                    if (!fs.existsSync(`${dest}/${outputN}.js.map`)) {
-                        reject(Error('Filemap wasn\'t created'));
-                    }
                     resolve('File was created');
                 });
         } else {
-            reject(Error(`Source File ${pathToSrcMainJs} does not exist.`));
+            reject(Error(`Source File ${src} does not exist.`));
         }
     });
 }

@@ -1,7 +1,9 @@
 const builder = require('../index');
 const fs = require('fs');
+const path = require('path');
 const css = require('../node_modules/css');
 const parse5 = require('../node_modules/parse5');
+const requireFromString = require('../node_modules/require-from-string');
 const del = require('../node_modules/del');
 
 const tempDir = './test/temp';
@@ -30,19 +32,27 @@ function countNodesPreOrder(tree){
 
 test('Build a test html file', async () => {
     const testDir = './test/src/html';
-    const testFileName = 'extend';
-    const compFile = 'comp';
+    const srcFile = 'extend.njk';
+    const outputFile = 'extend.html';
+    const nonexistentFile = 'nonexistent.njk';
+    const compFile = 'comp.html';
 
     const data = {text: 'This is some header'};
 
-    expect.assertions(4);
+    expect.assertions(5);
 
-    await expect(builder.buildHTMLMain(`${testDir}/something.njk`, tempDir, data)).rejects.toThrowError();
+    await expect(builder.buildHTMLMain(path.join(testDir, nonexistentFile), tempDir, {
+        data: data,
+    })).rejects.toThrowError();
 
-    await expect(builder.buildHTMLMain(`${testDir}/${testFileName}.njk`, tempDir, data)).resolves.toBeTruthy();
+    await expect(builder.buildHTMLMain(path.join(testDir, srcFile), tempDir, {
+        data: data,
+    })).resolves.toBeTruthy();
 
-    let testStr = fs.readFileSync(`${tempDir}/${testFileName}.html`, 'utf8');
-    let compStr = fs.readFileSync(`${compDir}/${compFile}.html`, 'utf8');
+    expect(fs.existsSync(path.join(tempDir, outputFile))).toBe(true);
+
+    let testStr = fs.readFileSync(path.join(tempDir, outputFile), 'utf8');
+    let compStr = fs.readFileSync(path.join(compDir, compFile), 'utf8');
 
     expect(testStr.includes(data.text)).toBe(true);
 
@@ -56,23 +66,27 @@ test('Build a test html file', async () => {
     expect(countNodesPreOrder(compObj)).toBe(countNodesPreOrder(testObj));
 });
 
-test('Build a test scss file', async () => {
+test('Build a test css file', async () => {
     const testDir = './test/src/scss';
-    const testFileName = 'base';
-    const compFile = 'comp';
+    const srcFile = 'base.scss';
+    const outputFile = 'base.css';
+    const nonexistentFile = 'nonexistent.scss';
+    const compFile = 'comp.css';
 
-    expect.assertions(4);
+    expect.assertions(5);
 
-    await expect(builder.buildCSSMain(`${testDir}/something.scss`, tempDir)).rejects.toThrowError();
+    await expect(builder.buildCSSMain(path.join(testDir, nonexistentFile), tempDir)).rejects.toThrowError();
 
-    await expect(builder.buildCSSMain(`${testDir}/${testFileName}.scss`, tempDir)).resolves.toBeTruthy();
+    await expect(builder.buildCSSMain(path.join(testDir, srcFile), tempDir)).resolves.toBeTruthy();
 
-    let testStr = fs.readFileSync(`${tempDir}/${testFileName}.css`, 'utf8');
-    let compStr = fs.readFileSync(`${compDir}/${compFile}.css`, 'utf8');
+    expect(fs.existsSync(path.join(tempDir, outputFile))).toBe(true);
+
+    let testStr = fs.readFileSync(path.join(tempDir, outputFile), 'utf8');
+    let compStr = fs.readFileSync(path.join(compDir, compFile), 'utf8');
 
     let [testObj, compObj] = await Promise.all([
-        css.parse(testStr, { source: `${tempDir}/${testFileName}.css` }),
-        css.parse(compStr, { source: `${compDir}/${compFile}.css` })
+        css.parse(testStr, { source: path.join(tempDir, outputFile) }),
+        css.parse(compStr, { source: path.join(compDir, compFile) })
     ]);
 
     expect(testStr).toEqual(expect.stringContaining('\n'));
@@ -82,26 +96,34 @@ test('Build a test scss file', async () => {
     expect(testObj.stylesheet.rules.length).toBe(compObj.stylesheet.rules.length);
 });
 
-test('Build a minified test scss file', async () => {
+test('Build a minified test css file', async () => {
     const testDir = './test/src/scss';
-    const testFileName = 'base';
-    const compFile = 'comp';
+    const srcFile = 'base.scss';
+    const outputFile = 'base.css';
+    const nonexistentFile = 'nonexistent.scss';
+    const compFile = 'comp.css';
 
-    expect.assertions(4);
+    expect.assertions(5);
 
-    await expect(builder.buildCSSMain(`${testDir}/something.scss`, tempDir, true)).rejects.toThrowError();
+    await expect(builder.buildCSSMain(path.join(testDir, nonexistentFile), tempDir, {
+        minify: true,
+    })).rejects.toThrowError();
 
-    await expect(builder.buildCSSMain(`${testDir}/${testFileName}.scss`, tempDir, true)).resolves.toBeTruthy();
+    await expect(builder.buildCSSMain(path.join(testDir, srcFile), tempDir, {
+        minify: true,
+    })).resolves.toBeTruthy();
 
-    let testStr = fs.readFileSync(`${tempDir}/${testFileName}.css`, 'utf8');
-    let compStr = fs.readFileSync(`${compDir}/${compFile}.css`, 'utf8');
+    expect(fs.existsSync(path.join(tempDir, outputFile))).toBe(true);
 
-    expect(testStr).toEqual(expect.not.stringContaining('\n'));
+    let testStr = fs.readFileSync(path.join(tempDir, outputFile), 'utf8');
+    let compStr = fs.readFileSync(path.join(compDir, compFile), 'utf8');
 
     let [testObj, compObj] = await Promise.all([
-        css.parse(testStr, { source: `${tempDir}/${testFileName}.css` }),
-        css.parse(compStr, { source: `${compDir}/${compFile}.css` })
+        css.parse(testStr, { source: path.join(tempDir, outputFile) }),
+        css.parse(compStr, { source: path.join(compDir, compFile) })
     ]);
+
+    expect(testStr).toEqual(expect.not.stringContaining('\n'));
 
     // Only check for same amount of rules
     // TODO: Develop better method to compare CSS-ASTs
@@ -110,75 +132,118 @@ test('Build a minified test scss file', async () => {
 
 test('Build a test js file', async () => {
     const testDir = './test/src/js';
-    const testFileName = 'base';
-    const finalFileName = 'main';
+    const srcFile = 'base.js';
+    const outputFile = 'main.js';
+    const outputFileMap = 'main.js.map';
+    const nonexistentFile = 'nonexistent.js';
 
-    expect.assertions(7);
+    expect.assertions(9);
 
-    await expect(builder.buildJSMain(`${testDir}/something.js`, tempDir, finalFileName)).rejects.toThrowError();
+    // All js builds have to be standalone, because otherwise node js cannot execute them
+    await expect(builder.buildJSMain(path.join(testDir, nonexistentFile), tempDir, {
+        outputName: outputFile,
+        beStandalone: true,
+    })).rejects.toThrowError();
 
-    await expect(builder.buildJSMain(`${testDir}/${testFileName}.js`, tempDir, finalFileName)).resolves.toBeTruthy();
+    await expect(builder.buildJSMain(path.join(testDir, srcFile), tempDir, {
+        outputName: outputFile,
+        beStandalone: true,
+    })).resolves.toBeTruthy();
 
-    const temp = require(`./temp/${finalFileName}`);
+    expect(fs.existsSync(tempDir, outputFile)).toBe(true);
+    expect(fs.existsSync(tempDir, outputFileMap)).toBe(true);
+
+    const testModule = require(path.resolve(path.join(tempDir, outputFile)));
 
     let a = 10;
     let b = 5;
-    expect(temp.add(a, b)).toBe(a + b);
-    expect(temp.subtract(a, b)).toBe(a - b);
-    expect(temp.multiply(a, b)).toBe(a * b);
-    expect(temp.divide(a, b)).toBe(a / b);
-    expect(temp.helloWorld()).toBe('Hello World!');
+    expect(testModule.add(a, b)).toBe(a + b);
+    expect(testModule.subtract(a, b)).toBe(a - b);
+    expect(testModule.multiply(a, b)).toBe(a * b);
+    expect(testModule.divide(a, b)).toBe(a / b);
+    expect(testModule.helloWorld()).toBe('Hello World!');
 });
 
 test('Build a babeled test js file', async () => {
     const testDir = './test/src/js';
-    const testFileName = 'base';
-    const finalFileName = 'main';
+    const srcFile = 'base.js';
+    const outputFile = 'main.js';
+    const outputFileMap = 'main.js.map';
+    const nonexistentFile = 'nonexistent.js';
 
-    expect.assertions(8);
+    expect.assertions(10);
 
-    await expect(builder.buildJSMain(`${testDir}/something.js`, tempDir, finalFileName, true)).rejects.toThrowError();
+    // All js builds have to be standalone, because otherwise node js cannot execute them
+    await expect(builder.buildJSMain(path.join(testDir, nonexistentFile), tempDir, {
+        outputName: outputFile,
+        useBabel: true,
+        beStandalone: true,
+    })).rejects.toThrowError();
 
-    await expect(builder.buildJSMain(`${testDir}/${testFileName}.js`, tempDir, finalFileName, true)).resolves.toBeTruthy();
+    await expect(builder.buildJSMain(path.join(testDir, srcFile), tempDir, {
+        outputName: outputFile,
+        useBabel: true,
+        beStandalone: true,
+    })).resolves.toBeTruthy();
 
-    const temp = require(`./temp/${finalFileName}`);
+    expect(fs.existsSync(tempDir, outputFile)).toBe(true);
+    expect(fs.existsSync(tempDir, outputFileMap)).toBe(true);
 
-    let a = 10;
-    let b = 5;
-    expect(temp.add(a, b)).toBe(a + b);
-    expect(temp.subtract(a, b)).toBe(a - b);
-    expect(temp.multiply(a, b)).toBe(a * b);
-    expect(temp.divide(a, b)).toBe(a / b);
-    expect(temp.helloWorld()).toBe('Hello World!');
-
-    let testStr = fs.readFileSync(`${tempDir}/${finalFileName}.js`, 'utf8');
+    let testStr = fs.readFileSync(path.join(tempDir, outputFile), 'utf8');
 
     // TODO
     expect(testStr).toEqual(expect.stringContaining(' '));
+
+    const testModule = require(path.resolve(path.join(tempDir, outputFile)));
+
+    let a = 10;
+    let b = 5;
+    expect(testModule.add(a, b)).toBe(a + b);
+    expect(testModule.subtract(a, b)).toBe(a - b);
+    expect(testModule.multiply(a, b)).toBe(a * b);
+    expect(testModule.divide(a, b)).toBe(a / b);
+    expect(testModule.helloWorld()).toBe('Hello World!');
 });
 
 test('Build a uglified test js file', async () => {
     const testDir = './test/src/js';
-    const testFileName = 'base';
-    const finalFileName = 'main';
+    const srcFile = 'base.js';
+    const outputFile = 'main.js';
+    const outputFileMap = 'main.js.map';
+    const nonexistentFile = 'nonexistent.js';
 
-    expect.assertions(8);
+    expect.assertions(10);
 
-    await expect(builder.buildJSMain(`${testDir}/something.js`, tempDir, finalFileName, false, true)).rejects.toThrowError();
+    // All js builds have to be standalone, because otherwise node js cannot execute them
+    await expect(builder.buildJSMain(path.join(testDir, nonexistentFile), tempDir, {
+        outputName: outputFile,
+        beStandalone: true,
+        useUglify: true,
+    })).rejects.toThrowError();
 
-    await expect(builder.buildJSMain(`${testDir}/${testFileName}.js`, tempDir, finalFileName, false, true)).resolves.toBeTruthy();
+    await expect(builder.buildJSMain(path.join(testDir, srcFile), tempDir, {
+        outputName: outputFile,
+        useUglify: true,
+        beStandalone: true,
+    })).resolves.toBeTruthy();
 
-    const temp = require(`./temp/${finalFileName}`);
+    expect(fs.existsSync(tempDir, outputFile)).toBe(true);
+    expect(fs.existsSync(tempDir, outputFileMap)).toBe(true);
+
+    let testStr = fs.readFileSync(path.join(tempDir, outputFile), 'utf8');
+
+    let lineBreakCount = (testStr.match(/\n/g) || []).length;
+    // Two linebreaks are always included
+    // One for the sourcemap link and one as the final token
+    expect(lineBreakCount).toBeLessThanOrEqual(2);
+
+    const testModule = require(path.resolve(path.join(tempDir, outputFile)));
 
     let a = 10;
     let b = 5;
-    expect(temp.add(a, b)).toBe(a + b);
-    expect(temp.subtract(a, b)).toBe(a - b);
-    expect(temp.multiply(a, b)).toBe(a * b);
-    expect(temp.divide(a, b)).toBe(a / b);
-    expect(temp.helloWorld()).toBe('Hello World!');
-
-    let testStr = fs.readFileSync(`${tempDir}/${finalFileName}.js`, 'utf8');
-
-    expect(testStr).toEqual(expect.not.stringContaining('\n'));
+    expect(testModule.add(a, b)).toBe(a + b);
+    expect(testModule.subtract(a, b)).toBe(a - b);
+    expect(testModule.multiply(a, b)).toBe(a * b);
+    expect(testModule.divide(a, b)).toBe(a / b);
+    expect(testModule.helloWorld()).toBe('Hello World!');
 });
