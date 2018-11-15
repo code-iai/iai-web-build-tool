@@ -34,6 +34,7 @@ const fs = require('fs');
 const path = require('path');
 
 function buildHTMLMain(src, dest, {
+    outputName = '',
     data = {},
 } = {}) {
     return new Promise((resolve, reject) => {
@@ -41,12 +42,12 @@ function buildHTMLMain(src, dest, {
             reject(Error(`Source File ${src} does not exist.`));
         }
 
-        const htmlFile = `${path.basename(src, path.extname(src))}.html`;
+        const fileName = outputName || `${path.basename(src, path.extname(src))}.html`;
 
         gulp.src(src)
             .pipe(gulpData(() => (data)))
             .pipe(nunjucks.compile())
-            .pipe(rename(htmlFile))
+            .pipe(rename(fileName))
             .pipe(gulp.dest(dest))
             .on('finish', () => {
                 resolve('File was created');
@@ -55,6 +56,7 @@ function buildHTMLMain(src, dest, {
 }
 
 function buildCSSMain(src, dest, {
+    outputName = '',
     minify = false,
 } = {}) {
     return new Promise((resolve, reject) => {
@@ -62,14 +64,17 @@ function buildCSSMain(src, dest, {
             reject(Error(`Source File ${src} does not exist.`));
         }
 
-        const c = gulp.src(src)
+        let c = gulp.src(src)
             .pipe(sass());
 
         if (minify) {
-            c.pipe(cleanCSS({ compatibility: 'ie8' }));
+            c = c.pipe(cleanCSS({ compatibility: 'ie8' }));
         }
 
+        const fileName = outputName || `${path.basename(src, path.extname(src))}.css`;
+
         c.on('error', log.error)
+            .pipe(rename(fileName))
             .pipe(gulp.dest(dest))
             .on('finish', () => {
                 resolve('File was created');

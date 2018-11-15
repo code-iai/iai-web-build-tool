@@ -33,7 +33,7 @@ function countNodesPreOrder(tree){
 test('Build a test html file', async () => {
     const testDir = './test/src/html';
     const srcFile = 'extend.njk';
-    const outputFile = 'extend.html';
+    const outputFile = 'main.html';
     const nonexistentFile = 'nonexistent.njk';
     const compFile = 'comp.html';
 
@@ -42,10 +42,12 @@ test('Build a test html file', async () => {
     expect.assertions(5);
 
     await expect(builder.buildHTMLMain(path.join(testDir, nonexistentFile), tempDir, {
+        outputName: outputFile,
         data: data,
     })).rejects.toThrowError();
 
     await expect(builder.buildHTMLMain(path.join(testDir, srcFile), tempDir, {
+        outputName: outputFile,
         data: data,
     })).resolves.toBeTruthy();
 
@@ -66,18 +68,26 @@ test('Build a test html file', async () => {
     expect(countNodesPreOrder(compObj)).toBe(countNodesPreOrder(testObj));
 });
 
+test('Build a renamed html file', async () => {
+
+});
+
 test('Build a test css file', async () => {
     const testDir = './test/src/scss';
     const srcFile = 'base.scss';
-    const outputFile = 'base.css';
+    const outputFile = 'main.css';
     const nonexistentFile = 'nonexistent.scss';
     const compFile = 'comp.css';
 
     expect.assertions(5);
 
-    await expect(builder.buildCSSMain(path.join(testDir, nonexistentFile), tempDir)).rejects.toThrowError();
+    await expect(builder.buildCSSMain(path.join(testDir, nonexistentFile), tempDir, {
+        outputName: outputFile,
+    })).rejects.toThrowError();
 
-    await expect(builder.buildCSSMain(path.join(testDir, srcFile), tempDir)).resolves.toBeTruthy();
+    await expect(builder.buildCSSMain(path.join(testDir, srcFile), tempDir, {
+        outputName: outputFile,
+    })).resolves.toBeTruthy();
 
     expect(fs.existsSync(path.join(tempDir, outputFile))).toBe(true);
 
@@ -99,17 +109,19 @@ test('Build a test css file', async () => {
 test('Build a minified test css file', async () => {
     const testDir = './test/src/scss';
     const srcFile = 'base.scss';
-    const outputFile = 'base.css';
+    const outputFile = 'main.css';
     const nonexistentFile = 'nonexistent.scss';
     const compFile = 'comp.css';
 
     expect.assertions(5);
 
     await expect(builder.buildCSSMain(path.join(testDir, nonexistentFile), tempDir, {
+        outputName: outputFile,
         minify: true,
     })).rejects.toThrowError();
 
     await expect(builder.buildCSSMain(path.join(testDir, srcFile), tempDir, {
+        outputName: outputFile,
         minify: true,
     })).resolves.toBeTruthy();
 
@@ -153,7 +165,7 @@ test('Build a test js file', async () => {
     expect(fs.existsSync(tempDir, outputFile)).toBe(true);
     expect(fs.existsSync(tempDir, outputFileMap)).toBe(true);
 
-    const testModule = require(path.resolve(path.join(tempDir, outputFile)));
+    const testModule = require(`./temp/${outputFile}`);
 
     let a = 10;
     let b = 5;
@@ -194,7 +206,7 @@ test('Build a babeled test js file', async () => {
     // TODO
     expect(testStr).toEqual(expect.stringContaining(' '));
 
-    const testModule = require(path.resolve(path.join(tempDir, outputFile)));
+    const testModule = require(`./temp/${outputFile}`);
 
     let a = 10;
     let b = 5;
@@ -237,7 +249,7 @@ test('Build a uglified test js file', async () => {
     // One for the sourcemap link and one as the final token
     expect(lineBreakCount).toBeLessThanOrEqual(2);
 
-    const testModule = require(path.resolve(path.join(tempDir, outputFile)));
+    const testModule = require(`./temp/${outputFile}`);
 
     let a = 10;
     let b = 5;
