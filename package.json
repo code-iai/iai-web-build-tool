@@ -18,6 +18,15 @@
     "url": "https://github.com/code-iai/iai-web-build-tool/issues"
   },
   "homepage": "https://github.com/code-iai/iai-web-build-tool#readme",
+  "jest": {
+    "verbose": true,
+    "testURL": "http://localhost/",
+    "collectCoverage": true,
+    "coverageReporters": [
+      "json",
+      "html"
+    ]
+  },
   "devDependencies": {
     "css": "^2.2.4",
     "del": "^3.0.0",
