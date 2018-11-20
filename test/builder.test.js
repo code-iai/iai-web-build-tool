@@ -80,11 +80,11 @@ test('Build a test css file', async () => {
 
     expect.assertions(5);
 
-    await expect(builder.buildCSSMain(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.scss.build(path.join(testDir, nonexistentFile), tempDir, {
         outputName: outputFile,
     })).rejects.toThrowError();
 
-    await expect(builder.buildCSSMain(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.scss.build(path.join(testDir, srcFile), tempDir, {
         outputName: outputFile,
     })).resolves.toBeTruthy();
 
@@ -114,12 +114,12 @@ test('Build a minified test css file', async () => {
 
     expect.assertions(5);
 
-    await expect(builder.buildCSSMain(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.scss.build(path.join(testDir, nonexistentFile), tempDir, {
         outputName: outputFile,
         minify: true,
     })).rejects.toThrowError();
 
-    await expect(builder.buildCSSMain(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.scss.build(path.join(testDir, srcFile), tempDir, {
         outputName: outputFile,
         minify: true,
     })).resolves.toBeTruthy();

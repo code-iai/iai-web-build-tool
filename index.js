@@ -18,47 +18,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 const gulp = require('gulp');
 const log = require('gulplog');
-const sass = require('gulp-sass');
-const cleanCSS = require('gulp-clean-css');
+
 const uglify = require('gulp-uglify');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
-const rename = require('gulp-rename');
 const browserify = require('browserify');
 const reactify = require('reactify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const fs = require('fs');
 const path = require('path');
+
 const html = require('./src/html');
-
-
-function buildCSSMain(src, dest, {
-    outputName = '',
-    minify = false,
-} = {}) {
-    return new Promise((resolve, reject) => {
-        if (!fs.existsSync(src)) {
-            reject(Error(`Source File ${src} does not exist.`));
-        }
-
-        let c = gulp.src(src)
-            .pipe(sass());
-
-        if (minify) {
-            c = c.pipe(cleanCSS({ compatibility: 'ie8' }));
-        }
-
-        const fileName = outputName || `${path.basename(src, path.extname(src))}.css`;
-
-        c.on('error', log.error)
-            .pipe(rename(fileName))
-            .pipe(gulp.dest(dest))
-            .on('finish', () => {
-                resolve('File was created');
-            });
-    });
-}
+const scss = require('./src/scss');
 
 function resolveJSRequireDependencies(src, {
     outputName = '',
@@ -123,6 +95,6 @@ function buildJSMain(src, dest, {
 
 module.exports = {
     html,
-    buildCSSMain,
+    scss,
     buildJSMain,
 };
