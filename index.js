@@ -23,8 +23,6 @@ const cleanCSS = require('gulp-clean-css');
 const uglify = require('gulp-uglify');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
-const nunjucks = require('gulp-nunjucks');
-const gulpData = require('gulp-data');
 const rename = require('gulp-rename');
 const browserify = require('browserify');
 const reactify = require('reactify');
@@ -32,28 +30,8 @@ const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const fs = require('fs');
 const path = require('path');
+const html = require('./src/html');
 
-function buildHTMLMain(src, dest, {
-    outputName = '',
-    data = {},
-} = {}) {
-    return new Promise((resolve, reject) => {
-        if (!fs.existsSync(src)) {
-            reject(Error(`Source File ${src} does not exist.`));
-        }
-
-        const fileName = outputName || `${path.basename(src, path.extname(src))}.html`;
-
-        gulp.src(src)
-            .pipe(gulpData(() => (data)))
-            .pipe(nunjucks.compile())
-            .pipe(rename(fileName))
-            .pipe(gulp.dest(dest))
-            .on('finish', () => {
-                resolve('File was created');
-            });
-    });
-}
 
 function buildCSSMain(src, dest, {
     outputName = '',
@@ -144,7 +122,7 @@ function buildJSMain(src, dest, {
 }
 
 module.exports = {
-    buildHTMLMain,
+    html,
     buildCSSMain,
     buildJSMain,
 };

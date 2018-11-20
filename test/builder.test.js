@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const css = require('../node_modules/css');
 const parse5 = require('../node_modules/parse5');
-const requireFromString = require('../node_modules/require-from-string');
 const del = require('../node_modules/del');
 
 const tempDir = './test/temp';
@@ -41,12 +40,12 @@ test('Build a test html file', async () => {
 
     expect.assertions(5);
 
-    await expect(builder.buildHTMLMain(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.html.build(path.join(testDir, nonexistentFile), tempDir, {
         outputName: outputFile,
         data: data,
     })).rejects.toThrowError();
 
-    await expect(builder.buildHTMLMain(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.html.build(path.join(testDir, srcFile), tempDir, {
         outputName: outputFile,
         data: data,
     })).resolves.toBeTruthy();
