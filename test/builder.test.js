@@ -62,13 +62,8 @@ test('Build a test html file', async () => {
         parse5.parse(compStr)
     ]);
 
-    // TODO: Develop better method to compare HTML-ASTs
     // Pre-order tree traversal
     expect(countNodesPreOrder(compObj)).toBe(countNodesPreOrder(testObj));
-});
-
-test('Build a renamed html file', async () => {
-
 });
 
 test('Build a test css file', async () => {
@@ -101,7 +96,6 @@ test('Build a test css file', async () => {
     expect(testStr).toEqual(expect.stringContaining('\n'));
 
     // Only check for same amount of rules
-    // TODO: Develop better method to compare CSS-ASTs
     expect(testObj.stylesheet.rules.length).toBe(compObj.stylesheet.rules.length);
 });
 
@@ -137,7 +131,6 @@ test('Build a minified test css file', async () => {
     expect(testStr).toEqual(expect.not.stringContaining('\n'));
 
     // Only check for same amount of rules
-    // TODO: Develop better method to compare CSS-ASTs
     expect(testObj.stylesheet.rules.length).toBe(compObj.stylesheet.rules.length);
 });
 
@@ -201,8 +194,7 @@ test('Build a babeled test js file', async () => {
     expect(fs.existsSync(tempDir, outputFileMap)).toBe(true);
 
     let testStr = fs.readFileSync(path.join(tempDir, outputFile), 'utf8');
-
-    // TODO
+    
     expect(testStr).toEqual(expect.stringContaining(' '));
 
     const testModule = require(`./temp/${outputFile}`);
