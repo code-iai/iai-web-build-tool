@@ -40,12 +40,14 @@ test('Build a test html file', async () => {
 
     expect.assertions(5);
 
-    await expect(builder.html.build(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.html.build(path.join(testDir, nonexistentFile), {
+        dest: tempDir,
         outputName: outputFile,
         data: data,
-    })).rejects.toThrowError();
+    })).rejects.toThrowError(ReferenceError);
 
-    await expect(builder.html.build(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.html.build(path.join(testDir, srcFile), {
+        dest: tempDir,
         outputName: outputFile,
         data: data,
     })).resolves.toBeTruthy();
@@ -75,11 +77,13 @@ test('Build a test css file', async () => {
 
     expect.assertions(5);
 
-    await expect(builder.scss.build(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.scss.build(path.join(testDir, nonexistentFile), {
+        dest: tempDir,
         outputName: outputFile,
-    })).rejects.toThrowError();
+    })).rejects.toThrowError(ReferenceError);
 
-    await expect(builder.scss.build(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.scss.build(path.join(testDir, srcFile), {
+        dest: tempDir,
         outputName: outputFile,
     })).resolves.toBeTruthy();
 
@@ -108,12 +112,14 @@ test('Build a minified test css file', async () => {
 
     expect.assertions(5);
 
-    await expect(builder.scss.build(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.scss.build(path.join(testDir, nonexistentFile), {
+        dest: tempDir,
         outputName: outputFile,
         minify: true,
-    })).rejects.toThrowError();
+    })).rejects.toThrowError(ReferenceError);
 
-    await expect(builder.scss.build(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.scss.build(path.join(testDir, srcFile), {
+        dest: tempDir,
         outputName: outputFile,
         minify: true,
     })).resolves.toBeTruthy();
@@ -144,12 +150,14 @@ test('Build a test js file', async () => {
     expect.assertions(9);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(builder.js.build(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, nonexistentFile), {
+        dest: tempDir,
         outputName: outputFile,
         beStandalone: true,
-    })).rejects.toThrowError();
+    })).rejects.toThrowError(ReferenceError);
 
-    await expect(builder.js.build(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, srcFile), {
+        dest: tempDir,
         outputName: outputFile,
         beStandalone: true,
     })).resolves.toBeTruthy();
@@ -178,13 +186,15 @@ test('Build a babeled test js file', async () => {
     expect.assertions(10);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(builder.js.build(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, nonexistentFile), {
+        dest: tempDir,
         outputName: outputFile,
         useBabel: true,
         beStandalone: true,
-    })).rejects.toThrowError();
+    })).rejects.toThrowError(ReferenceError);
 
-    await expect(builder.js.build(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, srcFile), {
+        dest: tempDir,
         outputName: outputFile,
         useBabel: true,
         beStandalone: true,
@@ -218,13 +228,15 @@ test('Build a uglified test js file', async () => {
     expect.assertions(10);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(builder.js.build(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, nonexistentFile), {
+        dest: tempDir,
         outputName: outputFile,
         beStandalone: true,
         useUglify: true,
-    })).rejects.toThrowError();
+    })).rejects.toThrowError(ReferenceError);
 
-    await expect(builder.js.build(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, srcFile), {
+        dest: tempDir,
         outputName: outputFile,
         useUglify: true,
         beStandalone: true,

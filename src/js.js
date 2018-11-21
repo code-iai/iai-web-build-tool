@@ -26,68 +26,74 @@ const browserify = require('browserify');
 const reactify = require('reactify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
-const fs = require('fs');
-const path = require('path');
+
+const basename = require('./utilities/basename');
+const fileExist = require('./utilities/file-exist');
 
 function resolveJSRequireDependencies(src, {
-  outputName = '',
-  beStandalone = false,
+    outputName = '',
+    beStandalone = false,
 } = {}) {
-  const standaloneName = (beStandalone && outputName) ? path.basename(outputName, '.js') : '';
+    const standaloneName = (beStandalone && outputName)
+        ? basename.fileBasenameWithoutExtension(outputName, {
+            extension: '.js',
+        })
+        : '';
 
-  const b = browserify({
-    entries: src,
-    debug: true,
-    // defining transforms here will avoid crashing your stream
-    transform: [reactify],
-    standalone: standaloneName,
-  });
+    const b = browserify({
+        entries: src,
+        debug: true,
+        // defining transforms here will avoid crashing your stream
+        transform: [reactify],
+        standalone: standaloneName,
+    });
 
-  b.external('d3');
-  b.external('jquery');
-  b.external('rdflib');
+    b.external('d3');
+    b.external('jquery');
+    b.external('rdflib');
 
-  return b.bundle()
-    .pipe(source(outputName))
-    .pipe(buffer())
-    .pipe(sourcemaps.init({ loadMaps: true }));
+    return b.bundle()
+        .pipe(source(outputName))
+        .pipe(buffer())
+        .pipe(sourcemaps.init({ loadMaps: true }));
 }
 
-function build(src, dest, {
-  outputName = '',
-  useBabel = false,
-  useUglify = false,
-  beStandalone = false,
+function build(src, {
+    dest = `${src}/dest`,
+    outputName = '',
+    useBabel = false,
+    useUglify = false,
+    beStandalone = false,
 } = {}) {
-  return new Promise((resolve, reject) => {
-    if (fs.existsSync(src)) {
-      const outputN = outputName || path.basename(src);
+    return new Promise((resolve) => {
+        fileExist.sourceDoesNotExistThrowError(src);
 
-      let b = resolveJSRequireDependencies(src, {
-        outputName: outputN,
-        beStandalone,
-      });
+        const outputN = outputName || basename.fileBasename(src);
 
-      if (useBabel || useUglify) {
-        b = b.pipe(babel({
-          presets: ['env'],
-        }));
-      }
-
-      if (useUglify) {
-        b = b.pipe(uglify());
-      }
-
-      b.on('error', log.error)
-        .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest(dest))
-        .on('finish', () => {
-          resolve('File was created');
+        let b = resolveJSRequireDependencies(src, {
+            outputName: outputN,
+            beStandalone,
         });
-    } else {
-      reject(Error(`Source File ${src} does not exist.`));
-    }
-  });
+
+        if (useBabel || useUglify) {
+            b = b.pipe(babel({
+                presets: ['env'],
+            }));
+        }
+
+        if (useUglify) {
+            b = b.pipe(uglify());
+        }
+
+        b.on('error', log.error)
+            .pipe(sourcemaps.write('./'))
+            .pipe(gulp.dest(dest))
+            .on('finish', () => {
+                resolve('File was created');
+            });
+    });
 }
 
-exports.build = build;
+module.exports = {
+    build,
+};

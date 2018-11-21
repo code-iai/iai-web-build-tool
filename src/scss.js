@@ -16,36 +16,48 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-const path = require('path');
-const fs = require('fs');
 const gulp = require('gulp');
 const sass = require('gulp-sass');
 const cleanCSS = require('gulp-clean-css');
 const rename = require('gulp-rename');
 const log = require('gulplog');
 
-function build(src, dest, { outputName = '', minify = false } = {}) {
-  return new Promise((resolve, reject) => {
-    if (!fs.existsSync(src)) {
-      reject(Error(`Source File ${src} does not exist.`));
-    }
+const basename = require('./utilities/basename');
+const fileExist = require('./utilities/file-exist');
 
-    let c = gulp.src(src)
-      .pipe(sass());
-
+function minifyFile(minify, gulpObject) {
     if (minify) {
-      c = c.pipe(cleanCSS({ compatibility: 'ie8' }));
+        return gulpObject.pipe(cleanCSS({ compatibility: 'ie8' }));
     }
-
-    const fileName = outputName || `${path.basename(src, path.extname(src))}.css`;
-
-    c.on('error', log.error)
-      .pipe(rename(fileName))
-      .pipe(gulp.dest(dest))
-      .on('finish', () => {
-        resolve('File was created');
-      });
-  });
+    return gulpObject;
 }
 
-exports.build = build;
+function build(src, {
+    dest = `${src}/dest`,
+    outputName = '',
+    minify = false,
+} = {}) {
+    return new Promise((resolve) => {
+        fileExist.sourceDoesNotExistThrowError(src);
+
+        const fileName = outputName || basename.fileBasenameNewExtension(src, {
+            extension: 'css',
+        });
+
+        let c = gulp.src(src)
+            .pipe(sass());
+
+        c = minifyFile(minify, c);
+
+        c.on('error', log.error)
+            .pipe(rename(fileName))
+            .pipe(gulp.dest(dest))
+            .on('finish', () => {
+                resolve('File was created');
+            });
+    });
+}
+
+module.exports = {
+    build,
+};

@@ -16,12 +16,12 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-const html = require('./src/html');
-const scss = require('./src/scss');
-const js = require('./src/js');
+const fs = require('fs');
+
+function sourceDoesNotExistThrowError(src) {
+    if (!fs.existsSync(src)) throw ReferenceError(`Source File ${src} does not exist.`);
+}
 
 module.exports = {
-    html,
-    scss,
-    js,
+    sourceDoesNotExistThrowError,
 };

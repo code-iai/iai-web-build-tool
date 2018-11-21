@@ -17,29 +17,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 
 const gulp = require('gulp');
-const fs = require('fs');
-const path = require('path');
 const nunjucks = require('gulp-nunjucks');
 const gulpData = require('gulp-data');
 const rename = require('gulp-rename');
 
-function build(src, dest, { outputName = '', data = {} } = {}) {
-  return new Promise((resolve, reject) => {
-    if (!fs.existsSync(src)) {
-      reject(Error(`Source File ${src} does not exist.`));
-    }
+const basename = require('./utilities/basename');
+const fileExist = require('./utilities/file-exist');
 
-    const fileName = outputName || `${path.basename(src, path.extname(src))}.html`;
+function build(src, {
+    dest = `${src}/dest`,
+    outputName = '',
+    data = {},
+} = {}) {
+    return new Promise((resolve) => {
+        fileExist.sourceDoesNotExistThrowError(src);
 
-    gulp.src(src)
-      .pipe(gulpData(() => (data)))
-      .pipe(nunjucks.compile())
-      .pipe(rename(fileName))
-      .pipe(gulp.dest(dest))
-      .on('finish', () => {
-        resolve('File was created');
-      });
-  });
+        const fileName = outputName || basename.fileBasenameNewExtension(src, {
+            extension: 'html',
+        });
+
+        gulp.src(src)
+            .pipe(gulpData(() => (data)))
+            .pipe(nunjucks.compile())
+            .pipe(rename(fileName))
+            .pipe(gulp.dest(dest))
+            .on('finish', () => {
+                resolve('File was created');
+            });
+    });
 }
 
-exports.build = build;
+module.exports = {
+    build,
+};

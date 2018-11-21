@@ -16,12 +16,26 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-const html = require('./src/html');
-const scss = require('./src/scss');
-const js = require('./src/js');
+const path = require('path');
+
+function fileBasename(src) {
+    return path.basename(src);
+}
+
+function fileBasenameWithoutExtension(src, {
+    extension = '',
+} = {}) {
+    return path.basename(src, extension);
+}
+
+function fileBasenameNewExtension(src, {
+    extension = '',
+} = {}) {
+    return `${path.basename(src, path.extname(src))}.${extension}`;
+}
 
 module.exports = {
-    html,
-    scss,
-    js,
+    fileBasename,
+    fileBasenameWithoutExtension,
+    fileBasenameNewExtension,
 };
