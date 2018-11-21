@@ -144,12 +144,12 @@ test('Build a test js file', async () => {
     expect.assertions(9);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(builder.buildJSMain(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, nonexistentFile), tempDir, {
         outputName: outputFile,
         beStandalone: true,
     })).rejects.toThrowError();
 
-    await expect(builder.buildJSMain(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, srcFile), tempDir, {
         outputName: outputFile,
         beStandalone: true,
     })).resolves.toBeTruthy();
@@ -178,13 +178,13 @@ test('Build a babeled test js file', async () => {
     expect.assertions(10);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(builder.buildJSMain(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, nonexistentFile), tempDir, {
         outputName: outputFile,
         useBabel: true,
         beStandalone: true,
     })).rejects.toThrowError();
 
-    await expect(builder.buildJSMain(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, srcFile), tempDir, {
         outputName: outputFile,
         useBabel: true,
         beStandalone: true,
@@ -194,7 +194,7 @@ test('Build a babeled test js file', async () => {
     expect(fs.existsSync(tempDir, outputFileMap)).toBe(true);
 
     let testStr = fs.readFileSync(path.join(tempDir, outputFile), 'utf8');
-    
+
     expect(testStr).toEqual(expect.stringContaining(' '));
 
     const testModule = require(`./temp/${outputFile}`);
@@ -218,13 +218,13 @@ test('Build a uglified test js file', async () => {
     expect.assertions(10);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(builder.buildJSMain(path.join(testDir, nonexistentFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, nonexistentFile), tempDir, {
         outputName: outputFile,
         beStandalone: true,
         useUglify: true,
     })).rejects.toThrowError();
 
-    await expect(builder.buildJSMain(path.join(testDir, srcFile), tempDir, {
+    await expect(builder.js.build(path.join(testDir, srcFile), tempDir, {
         outputName: outputFile,
         useUglify: true,
         beStandalone: true,
