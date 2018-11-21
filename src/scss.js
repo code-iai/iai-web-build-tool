@@ -25,27 +25,27 @@ const rename = require('gulp-rename');
 const log = require('gulplog');
 
 function build(src, dest, { outputName = '', minify = false } = {}) {
-    return new Promise((resolve, reject) => {
-        if (!fs.existsSync(src)) {
-            reject(Error(`Source File ${src} does not exist.`));
-        }
+  return new Promise((resolve, reject) => {
+    if (!fs.existsSync(src)) {
+      reject(Error(`Source File ${src} does not exist.`));
+    }
 
-        let c = gulp.src(src)
-            .pipe(sass());
+    let c = gulp.src(src)
+      .pipe(sass());
 
-        if (minify) {
-            c = c.pipe(cleanCSS({ compatibility: 'ie8' }));
-        }
+    if (minify) {
+      c = c.pipe(cleanCSS({ compatibility: 'ie8' }));
+    }
 
-        const fileName = outputName || `${path.basename(src, path.extname(src))}.css`;
+    const fileName = outputName || `${path.basename(src, path.extname(src))}.css`;
 
-        c.on('error', log.error)
-            .pipe(rename(fileName))
-            .pipe(gulp.dest(dest))
-            .on('finish', () => {
-                resolve('File was created');
-            });
-    });
+    c.on('error', log.error)
+      .pipe(rename(fileName))
+      .pipe(gulp.dest(dest))
+      .on('finish', () => {
+        resolve('File was created');
+      });
+  });
 }
 
 exports.build = build;

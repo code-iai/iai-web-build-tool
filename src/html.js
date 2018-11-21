@@ -24,22 +24,22 @@ const gulpData = require('gulp-data');
 const rename = require('gulp-rename');
 
 function build(src, dest, { outputName = '', data = {} } = {}) {
-    return new Promise((resolve, reject) => {
-        if (!fs.existsSync(src)) {
-            reject(Error(`Source File ${src} does not exist.`));
-        }
+  return new Promise((resolve, reject) => {
+    if (!fs.existsSync(src)) {
+      reject(Error(`Source File ${src} does not exist.`));
+    }
 
-        const fileName = outputName || `${path.basename(src, path.extname(src))}.html`;
+    const fileName = outputName || `${path.basename(src, path.extname(src))}.html`;
 
-        gulp.src(src)
-            .pipe(gulpData(() => (data)))
-            .pipe(nunjucks.compile())
-            .pipe(rename(fileName))
-            .pipe(gulp.dest(dest))
-            .on('finish', () => {
-                resolve('File was created');
-            });
-    });
+    gulp.src(src)
+      .pipe(gulpData(() => (data)))
+      .pipe(nunjucks.compile())
+      .pipe(rename(fileName))
+      .pipe(gulp.dest(dest))
+      .on('finish', () => {
+        resolve('File was created');
+      });
+  });
 }
 
 exports.build = build;
