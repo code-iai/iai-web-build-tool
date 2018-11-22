@@ -16,23 +16,24 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-const path = require('path');
-
-function fileBasename(source, {
-    noExtension = false,
-} = {}) {
-    if (noExtension) return path.basename(source, path.extname(source));
-
-    return path.basename(source);
+function treeHasChildNodes(tree) {
+    if (!tree.childNodes) return false;
+    return true;
 }
 
-function fileBasenameNewExtension(source, {
-    newExtension = '',
-} = {}) {
-    return `${path.basename(source, path.extname(source))}${newExtension}`;
+function countNodesPreOrder(tree) {
+    if (tree === undefined) return 0;
+    if (!treeHasChildNodes(tree)) return 1;
+
+    let nodeCount = 1;
+
+    for (let i = 0; i < tree.childNodes.length; i += 1) {
+        nodeCount += countNodesPreOrder(tree.childNodes[i]);
+    }
+
+    return nodeCount;
 }
 
 module.exports = {
-    fileBasename,
-    fileBasenameNewExtension
+    countPreOrder: countNodesPreOrder,
 };
