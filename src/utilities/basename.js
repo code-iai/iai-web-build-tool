@@ -29,7 +29,10 @@ function fileBasename(source, {
 function fileBasenameNewExtension(source, {
     newExtension = '',
 } = {}) {
-    return `${path.basename(source, path.extname(source))}${newExtension}`;
+    return path.format({
+        name: path.basename(source, path.extname(source)),
+        ext: newExtension,
+    });
 }
 
 module.exports = {
