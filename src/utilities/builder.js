@@ -23,18 +23,56 @@ const log = require('gulplog');
 const basename = require('./basename');
 const fileExist = require('./file-exist');
 
+function buildFileName(filename, {
+    extension = '',
+} = {}) {
+    return (extension)
+        ? basename.fileBasenameNewExtension(filename, {
+            newExtension: extension,
+        })
+        : basename.fileBasename(filename);
+}
+
+function pipeSource(source) {
+    return gulp.src(source);
+}
+
 function doSomething() {
     throw Error('You have to implement the method doSomething!');
 }
 
-function buildFileName(source, {
-    extension = '',
+function tryToDoSomething(piper) {
+    try {
+        return doSomething(piper);
+    } catch (Error) {
+        console.log(Error.message);
+        return piper;
+    }
+}
+
+function pipeRenameAndToDestination(piper, {
+    fileOutputName,
+    destination,
 } = {}) {
-    return (extension)
-        ? basename.fileBasenameNewExtension(source, {
-            newExtension: extension,
-        })
-        : basename.fileBasename(source);
+    piper.on('error', log.error)
+        .pipe(rename(fileOutputName))
+        .pipe(gulp.dest(destination));
+    //    .on('finish');
+}
+
+function buildFile({
+    source,
+    fileOutputName,
+    destination,
+} = {}) {
+    let piper = pipeSource(source);
+
+    piper = tryToDoSomething(piper);
+
+    pipeRenameAndToDestination(piper, {
+        fileOutputName,
+        destination,
+    });
 }
 
 function build(source, {
@@ -45,28 +83,25 @@ function build(source, {
     return new Promise((resolve) => {
         fileExist.fileDoesNotExistThrowError(source);
 
-        const fileOutputName = outputName || buildFileName(source, {
-            extension: outputExtension,
+        const fileOutputName = (outputName)
+            ? buildFileName(outputName, {
+                extension: outputExtension,
+            })
+            : buildFileName(source, {
+                extension: outputExtension,
+            });
+
+        buildFile({
+            source,
+            destination,
+            fileOutputName,
         });
 
-        let gulper = gulp.src(source);
-
-        try {
-            gulper = doSomething(gulper);
-        } catch (Error) {
-            console.log(Error.message);
-        }
-
-        gulper.on('error', log.error)
-            .pipe(rename(fileOutputName))
-            .pipe(gulp.dest(destination))
-            .on('finish', () => {
-                resolve('File was created');
-            });
+        resolve('File was created');
     });
 }
 
 module.exports = {
     build,
     doSomething,
-}
+};
