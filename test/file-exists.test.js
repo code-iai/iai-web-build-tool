@@ -5,12 +5,12 @@ const nonExistingFile = ('./test/src/misc/exists-not.txt');
 
 test('Throw ReferenceError when file does not exist.', () => {
     expect(() => {
-        fileExist.sourceDoesNotExistThrowError(nonExistingFile);
+        fileExist.fileDoesNotExistThrowError(nonExistingFile);
     }).toThrowError(ReferenceError);
 });
 
 test('Throw no Error when file exists.', () => {
     expect(() => {
-        fileExist.sourceDoesNotExistThrowError(existingFile);
+        fileExist.fileDoesNotExistThrowError(existingFile);
     }).not.toThrowError(ReferenceError);
 });

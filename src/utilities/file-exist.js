@@ -18,10 +18,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 const fs = require('fs');
 
-function sourceDoesNotExistThrowError(src) {
-    if (!fs.existsSync(src)) throw ReferenceError(`Source File ${src} does not exist.`);
+function fileDoesNotExistThrowError(source) {
+    if (!fs.existsSync(source)) throw ReferenceError(`Source File ${source} does not exist.`);
 }
 
 module.exports = {
-    sourceDoesNotExistThrowError,
+    fileDoesNotExistThrowError,
 };
