@@ -53,13 +53,11 @@ test('Build a file with standard parameters.', async () => {
 
     await expect(builder.build(source)).resolves.toBeTruthy();;
 
-    const outputDest = testBase.path.join(testBase.path.dirname(source), 'dest', basename.fileBasename(source, {
-        noExtension: true,
-    }));
+    const outputDest = testBase.path.join(testBase.path.dirname(source), 'dest', basename.fileBasename(source));
 
     await expect(testBase.fileExist.existsSync(outputDest)).toBe(true);
 
-    testBase.forceDeleteFile(['./src/builder/dest']);
+    await testBase.forceDeleteFile([outputDest]);
 });
 
 test('Throw no global error while building even if doSomething is not set.', async () => {
