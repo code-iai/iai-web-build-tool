@@ -19,6 +19,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 const gulp = require('gulp');
 const rename = require('gulp-rename');
 const log = require('gulplog');
+const path = require('path');
 
 const basename = require('./basename');
 const fileExist = require('./file-exist');
@@ -31,6 +32,10 @@ function buildFileName(filename, {
             newExtension: extension,
         })
         : basename.fileBasename(filename);
+}
+
+function buildStandardDestinationPath(source) {
+    return path.join(path.dirname(source), 'dest');
 }
 
 function pipeSource(source) {
@@ -76,9 +81,9 @@ function buildFile({
 }
 
 function build(source, {
-    destination = `${source}/dest`,
-    outputName = '',
-    outputExtension = '',
+    destination,
+    outputName,
+    outputExtension,
 } = {}) {
     return new Promise((resolve) => {
         fileExist.fileDoesNotExistThrowError(source);
@@ -91,13 +96,23 @@ function build(source, {
                 extension: outputExtension,
             });
 
-        buildFile({
-            source,
-            destination,
-            fileOutputName,
-        });
+        const dest = destination || buildStandardDestinationPath(source);
 
-        resolve('File was created');
+        // buildFile({
+        //     source,
+        //     destination,
+        //     fileOutputName,
+        // });
+
+        let piper = pipeSource(source);
+        piper = tryToDoSomething(piper);
+
+        piper.on('error', log.error)
+            .pipe(rename(fileOutputName))
+            .pipe(gulp.dest(dest))
+            .on('finish', () => {
+                resolve('File was created');
+            });
     });
 }
 

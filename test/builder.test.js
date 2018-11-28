@@ -1,4 +1,5 @@
 const builder = require('../src/utilities/builder');
+const basename = require('../src/utilities/basename');
 const testBase = require('./test-base');
 
 beforeEach(() => {
@@ -13,7 +14,9 @@ test('doSomething throws Error when not implemented.', () => {
     expect(() => {
         builder.doSomething()
     }).toThrowError(Error);
+});
 
+test('doSomething deos not throw Error when not implemented.', () => {
     builder.doSomething = function () {
         return true;
     };
@@ -36,28 +39,47 @@ test('doSomething throws Error when not implemented.', () => {
 });
 
 test('build throws ReferenceError when source is not valid.', async () => {
-    expect(async () => {
-        await builder.build('./src/builder/does-not-exist.txt');
-    }).toThrowError(ReferenceError);
-})
+    const doesNotExistFile = './src/builder/does-not-exist.txt';
+
+    await expect(builder.build(doesNotExistFile)).rejects.toThrowError(ReferenceError);
+});
 
 test('Build a file with standard parameters.', async () => {
-    const source = './src/builder/something.txt';
+    const source = './test/src/builder/something.txt';
 
-    // No need to set doSomething because internal try-catch will handle it
-    await builder.build(source);
+    builder.doSomething = function (piper) {
+        return piper;
+    };
 
-    expect(() => {
-        testBase.fileExist.fileDoesNotExistThrowError(source);
-    }).not.toThrowError(ReferenceError);
+    await expect(builder.build(source)).resolves.toBeTruthy();;
 
-    testBase.del.sync(['./src/builder/dest'], { force:true });
+    const outputDest = testBase.path.join(testBase.path.dirname(source), 'dest', basename.fileBasename(source, {
+        noExtension: true,
+    }));
+
+    await expect(testBase.fileExist.existsSync(outputDest)).toBe(true);
+
+    testBase.forceDeleteFile(['./src/builder/dest']);
 });
 
-test('Build a renamed file.', () => {
+test('Throw no global error while building even if doSomething is not set.', async () => {
+    expect(true).toBe(true);
+})
+
+test('Build a file to a certain destination.', async () => {
 
 });
 
-test('Build a file to a certain destination.', () => {
+// All test from here on write into the temp-directory
+
+test('Build a renamed file.', async () => {
+
+});
+
+test('Build a file with new extension.', async () => {
+
+});
+
+test('Build a renamed file with new extension.', async () => {
 
 });

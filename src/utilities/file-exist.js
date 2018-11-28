@@ -18,10 +18,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 const fs = require('fs');
 
+function existsSync(source) {
+    return fs.existsSync(source);
+}
+
 function fileDoesNotExistThrowError(source) {
     if (!fs.existsSync(source)) throw ReferenceError(`Source File ${source} does not exist.`);
 }
 
 module.exports = {
     fileDoesNotExistThrowError,
+    existsSync,
 };
