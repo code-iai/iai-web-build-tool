@@ -16,43 +16,50 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-const sass = require('gulp-sass');
-const cleanCSS = require('gulp-clean-css');
+const gulp = require('gulp');
 const rename = require('gulp-rename');
+const log = require('gulplog');
 
-const builder = require('./utilities/builder');
+const basename = require('./basename');
+const fileExist = require('./file-exist');
 
-function minifyFile(minify, gulpObject) {
-    if (minify) {
-        return gulpObject.pipe(cleanCSS({ compatibility: 'ie8' }));
-    }
-    return gulpObject;
+function doSomething() {
+    throw Error('You have to implement the method doSomething!');
 }
 
-function build(src, {
-    dest = `${src}/dest`,
+function buildFileName(source, {
+    extension = '',
+} = {}) {
+    return (extension)
+        ? basename.fileBasenameNewExtension(source, {
+            newExtension: extension,
+        })
+        : basename.fileBasename(source);
+}
+
+function build(source, {
+    destination = `${source}/dest`,
     outputName = '',
-    minify = false,
+    outputExtension = '',
 } = {}) {
     return new Promise((resolve) => {
-        builder.doSomething = (gulper) => {
+        fileExist.fileDoesNotExistThrowError(source);
 
-        };
-
-        fileExist.fileDoesNotExistThrowError(src);
-
-        const fileName = outputName || basename.fileBasenameNewExtension(src, {
-            extension: '.css',
+        const fileOutputName = outputName || buildFileName(source, {
+            extension: outputExtension,
         });
 
-        let c = gulp.src(src)
-            .pipe(sass());
+        let gulper = gulp.src(source);
 
-        c = minifyFile(minify, c);
+        try {
+            gulper = doSomething(gulper);
+        } catch (Error) {
+            console.log(Error.message);
+        }
 
-        c.on('error', log.error)
-            .pipe(rename(fileName))
-            .pipe(gulp.dest(dest))
+        gulper.on('error', log.error)
+            .pipe(rename(fileOutputName))
+            .pipe(gulp.dest(destination))
             .on('finish', () => {
                 resolve('File was created');
             });
@@ -61,4 +68,5 @@ function build(src, {
 
 module.exports = {
     build,
-};
+    doSomething,
+}

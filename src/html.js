@@ -18,26 +18,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 const gulp = require('gulp');
 const nunjucks = require('gulp-nunjucks');
-const gulpData = require('gulp-data');
 const rename = require('gulp-rename');
 
-const basename = require('./utilities/basename');
-const fileExist = require('./utilities/file-exist');
+const builder = require('./utilities/builder');
 
 function build(src, {
     dest = `${src}/dest`,
     outputName = '',
-    data = {},
 } = {}) {
     return new Promise((resolve) => {
-        fileExist.sourceDoesNotExistThrowError(src);
+        fileExist.fileDoesNotExistThrowError(src);
 
         const fileName = outputName || basename.fileBasenameNewExtension(src, {
-            extension: 'html',
+            extension: '.html',
         });
 
         gulp.src(src)
-            .pipe(gulpData(() => (data)))
             .pipe(nunjucks.compile())
             .pipe(rename(fileName))
             .pipe(gulp.dest(dest))

@@ -16,9 +16,6 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-const gulp = require('gulp');
-const log = require('gulplog');
-
 const uglify = require('gulp-uglify');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
@@ -27,8 +24,7 @@ const reactify = require('reactify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 
-const basename = require('./utilities/basename');
-const fileExist = require('./utilities/file-exist');
+const builder = require('./utilities/builder');
 
 function resolveJSRequireDependencies(src, {
     outputName = '',
@@ -66,7 +62,7 @@ function build(src, {
     beStandalone = false,
 } = {}) {
     return new Promise((resolve) => {
-        fileExist.sourceDoesNotExistThrowError(src);
+        fileExist.fileDoesNotExistThrowError(src);
 
         const outputN = outputName || basename.fileBasename(src);
 
