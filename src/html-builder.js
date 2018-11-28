@@ -16,30 +16,25 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-const gulp = require('gulp');
 const nunjucks = require('gulp-nunjucks');
-const rename = require('gulp-rename');
-
 const builder = require('./utilities/builder');
 
-function build(src, {
-    dest = `${src}/dest`,
+function build(source, {
+    destination = `${source}/dest`,
     outputName = '',
 } = {}) {
     return new Promise((resolve) => {
-        fileExist.fileDoesNotExistThrowError(src);
+        builder.doSomething = function (piper) {
+            return piper.pipe(nunjucks.compile());
+        };
 
-        const fileName = outputName || basename.fileBasenameNewExtension(src, {
-            extension: '.html',
+        builder.build(source, {
+            destination,
+            outputName,
+            outputExtension: '.html',
         });
 
-        gulp.src(src)
-            .pipe(nunjucks.compile())
-            .pipe(rename(fileName))
-            .pipe(gulp.dest(dest))
-            .on('finish', () => {
-                resolve('File was created');
-            });
+        resolve('HTML-File was created');
     });
 }
 

@@ -1,4 +1,4 @@
-const treeNodeCounter = require('../src/utilities/treeNodeCounter');
+const treeNodeCounter = require('../src/utilities/tree-node-counter');
 
 const tree = {
     childNodes: [
