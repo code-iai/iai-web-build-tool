@@ -53,10 +53,9 @@ test('Build a test html file.', async () => {
 test('Throw ReferenceError when source does not exist.', async () => {
     const testDir = './test/src/html';
     const outputFile = 'main.html';
+    const nonexistentFile = 'nonexistent.njk';
 
     expect.assertions(1);
-
-    const nonexistentFile = 'nonexistent.njk';
 
     expect(htmlBuilder.build(path.join(testDir, nonexistentFile), {
         destination: tB.tempDir,

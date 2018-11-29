@@ -22,40 +22,36 @@ const rename = require('gulp-rename');
 
 const builder = require('./utilities/builder');
 
-function minifyFile(minify, gulpObject) {
+function minifyFile(piper, {
+    minify,
+} = {}) {
     if (minify) {
-        return gulpObject.pipe(cleanCSS({ compatibility: 'ie8' }));
+        return piper.pipe(cleanCSS({ compatibility: 'ie8' }));
     }
-    return gulpObject;
+    return piper;
 }
 
 function build(src, {
-    dest = `${src}/dest`,
-    outputName = '',
+    destination,
+    outputName,
     minify = false,
 } = {}) {
-    return new Promise((resolve) => {
-        builder.doSomething = (gulper) => {
-
-        };
-
-        fileExist.fileDoesNotExistThrowError(src);
-
-        const fileName = outputName || basename.fileBasenameNewExtension(src, {
-            extension: '.css',
-        });
-
-        let c = gulp.src(src)
-            .pipe(sass());
-
-        c = minifyFile(minify, c);
-
-        c.on('error', log.error)
-            .pipe(rename(fileName))
-            .pipe(gulp.dest(dest))
-            .on('finish', () => {
-                resolve('File was created');
+    return new Promise(async (resolve, reject) => {
+        try{
+            await builder.build(source, {
+                destination,
+                outputName,
+                outputExtension: '.css',
+                customCallbackFunction: minifyFile,
+                callbackFunctionData: {
+                    minify,
+                },
             });
+        }catch(Error){
+            reject(Error);
+        }
+
+        resolve('CSS-File was created');
     });
 }
 

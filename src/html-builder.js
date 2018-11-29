@@ -24,8 +24,8 @@ function compileNunjucks(piper) {
 }
 
 function build(source, {
-    destination = `${source}/dest`,
-    outputName = '',
+    destination,
+    outputName,
 } = {}) {
     return new Promise(async (resolve, reject) => {
         try{
