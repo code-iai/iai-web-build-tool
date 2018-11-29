@@ -1,13 +1,16 @@
+const fs = require('fs');
+const path = require('path');
+
 const builder = require('../src/utilities/builder');
 const basename = require('../src/utilities/basename');
-const testBase = require('./test-base');
+const tB = require('./test-base');
 
 beforeEach(() => {
-    testBase.createTempDir();
+    tB.createTempDir();
 });
 
 afterEach(() => {
-    testBase.deleteTempDir();
+    tB.deleteTempDir();
 });
 
 const source = './test/src/builder/something.txt';
@@ -36,15 +39,15 @@ test('Build a file with standard parameters.', async () => {
 
     expect.assertions(2);
 
-    testBase.fs.copyFileSync(source, tempSource);
+    fs.copyFileSync(source, tempSource);
 
     await expect(builder.build(tempSource, {
         customCallbackFunction: callbackTestFunction,
     })).resolves.toBeTruthy();;
 
-    const outputDest = testBase.path.join(testBase.path.dirname(tempSource), 'dest', basename.fileBasename(source));
+    const outputDest = path.join(path.dirname(tempSource), 'dest', basename.fileBasename(source));
 
-    expect(testBase.fileExist.existsSync(outputDest)).toBe(true);
+    expect(tB.fileExist.existsSync(outputDest)).toBe(true);
 });
 
 test('Build a file to a certain destination.', async () => {
@@ -57,9 +60,9 @@ test('Build a file to a certain destination.', async () => {
         customCallbackFunction: callbackTestFunction,
     })).resolves.toBeTruthy();
 
-    const outputDest = testBase.path.join(destination, basename.fileBasename(source));
+    const outputDest = path.join(destination, basename.fileBasename(source));
 
-    expect(testBase.fileExist.existsSync(outputDest)).toBe(true);
+    expect(tB.fileExist.existsSync(outputDest)).toBe(true);
 });
 
 // All test from here on write into the temp-directory
@@ -76,9 +79,9 @@ test('Build a renamed file.', async () => {
         customCallbackFunction: callbackTestFunction,
     })).resolves.toBeTruthy();;
 
-    const outputDest = testBase.path.join(destination, basename.fileBasename(outputName));
+    const outputDest = path.join(destination, basename.fileBasename(outputName));
 
-    expect(testBase.fileExist.existsSync(outputDest)).toBe(true);
+    expect(tB.fileExist.existsSync(outputDest)).toBe(true);
 });
 
 test('Build a file with new extension.', async () => {
@@ -93,11 +96,11 @@ test('Build a file with new extension.', async () => {
         customCallbackFunction: callbackTestFunction,
     })).resolves.toBeTruthy();
 
-    const outputDest = testBase.path.join(destination, basename.fileBasenameNewExtension(source, {
+    const outputDest = path.join(destination, basename.fileBasenameNewExtension(source, {
         newExtension: extension,
     }));
 
-    expect(testBase.fileExist.existsSync(outputDest)).toBe(true);
+    expect(tB.fileExist.existsSync(outputDest)).toBe(true);
 });
 
 test('Build a renamed file with new extension.', async () => {
@@ -116,11 +119,11 @@ test('Build a renamed file with new extension.', async () => {
         customCallbackFunction: callbackTestFunction,
     })).resolves.toBeTruthy();
 
-    let outputDest = testBase.path.join(destination, basename.fileBasenameNewExtension(outputName, {
+    let outputDest = path.join(destination, basename.fileBasenameNewExtension(outputName, {
         newExtension: extension,
     }));
 
-    expect(testBase.fileExist.existsSync(outputDest)).toBe(true);
+    expect(tB.fileExist.existsSync(outputDest)).toBe(true);
 
     // Test with outputNameNoExtension
     await expect(builder.build(source, {
@@ -130,24 +133,24 @@ test('Build a renamed file with new extension.', async () => {
         customCallbackFunction: callbackTestFunction,
     })).resolves.toBeTruthy();
 
-    outputDest = testBase.path.join(destination, basename.fileBasenameNewExtension(outputNameNoExtension, {
+    outputDest = path.join(destination, basename.fileBasenameNewExtension(outputNameNoExtension, {
         newExtension: extension,
     }));
 
-    await expect(testBase.fileExist.existsSync(outputDest)).toBe(true);
+    await expect(tB.fileExist.existsSync(outputDest)).toBe(true);
 });
 
 function callbackTestFunctionWriteFileWithParameters (piper, {
     filepath,
     text,
 } = {}){
-    testBase.fs.writeFileSync(filepath, text);
+    fs.writeFileSync(filepath, text);
     return piper;
 }
 
 test('Test callback with passed function parameters.', async () => {
     const destination = './test/temp';
-    const fileWriteDest = testBase.path.join(destination, 'somefile.txt');
+    const fileWriteDest = path.join(destination, 'somefile.txt');
 
     expect.assertions(3);
 
@@ -160,10 +163,10 @@ test('Test callback with passed function parameters.', async () => {
         },
     })).resolves.toBeTruthy();
 
-    const outputDest = testBase.path.join(destination, basename.fileBasename(source));
+    const outputDest = path.join(destination, basename.fileBasename(source));
 
-    expect(testBase.fileExist.existsSync(outputDest)).toBe(true);
+    expect(tB.fileExist.existsSync(outputDest)).toBe(true);
 
     // Check whether file was written by the callback function
-    expect(testBase.fileExist.existsSync(fileWriteDest)).toBe(true);
+    expect(tB.fileExist.existsSync(fileWriteDest)).toBe(true);
 });
