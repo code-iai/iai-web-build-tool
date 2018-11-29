@@ -21,8 +21,6 @@ test('Build a test css file', async () => {
 
     expect.assertions(4);
 
-    console.log(path.join(testDir, srcFile));
-
     await expect(scssBuilder.build(path.join(testDir, srcFile), {
         destination: tB.tempDir,
         outputName: outputFile,
@@ -52,8 +50,6 @@ test('Build a minified test css file', async () => {
     const compFile = 'comp.css';
 
     expect.assertions(4);
-
-    console.log(path.join(testDir, srcFile));
 
     await expect(scssBuilder.build(path.join(testDir, srcFile), {
         destination: tB.tempDir,

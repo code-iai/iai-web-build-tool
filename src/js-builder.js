@@ -103,7 +103,7 @@ function build(source, {
                 },
             });
         }catch(Error){
-            console.log(Error.message);
+            // console.log(Error.message);
             reject(Error);
         }
 
