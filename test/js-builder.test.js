@@ -1,20 +1,12 @@
-const builder = require('../index');
-const fs = require('fs');
-const path = require('path');
-const css = require('../node_modules/css');
-const parse5 = require('../node_modules/parse5');
-const del = require('../node_modules/del');
-
-const tempDir = './test/temp';
-const compDir = './test/comp';
+const jsBuilder = require('../src/js-builder');
+const testBase = require('test-base');
 
 beforeEach(() => {
-    del.sync([tempDir], { force:true });
-    fs.mkdirSync(tempDir);
+    testBase.createTempDir();
 });
 
 afterEach(() => {
-    del.sync([tempDir], { force:true });
+    testBase.deleteTempDir();
 });
 
 test('Build a test js file', async () => {

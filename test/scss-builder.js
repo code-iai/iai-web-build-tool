@@ -1,35 +1,26 @@
-const builder = require('../index');
 const fs = require('fs');
 const path = require('path');
-const css = require('../node_modules/css');
-const parse5 = require('../node_modules/parse5');
-const del = require('../node_modules/del');
 
-const tempDir = './test/temp';
-const compDir = './test/comp';
+const css = require('../node_modules/css');
+const scssBuilder = require('../src/scss-builder');
+const tB = require('test-base');
 
 beforeEach(() => {
-    del.sync([tempDir], { force:true });
-    fs.mkdirSync(tempDir);
+    tB.createTempDir();
 });
 
 afterEach(() => {
-    del.sync([tempDir], { force:true });
+    tB.deleteTempDir();
 });
 
 test('Build a test css file', async () => {
     const testDir = './test/src/scss';
     const srcFile = 'base.scss';
     const outputFile = 'main.css';
-    const nonexistentFile = 'nonexistent.scss';
+
     const compFile = 'comp.css';
 
     expect.assertions(5);
-
-    await expect(builder.scss.build(path.join(testDir, nonexistentFile), {
-        dest: tempDir,
-        outputName: outputFile,
-    })).rejects.toThrowError(ReferenceError);
 
     await expect(builder.scss.build(path.join(testDir, srcFile), {
         dest: tempDir,
@@ -87,4 +78,17 @@ test('Build a minified test css file', async () => {
 
     // Only check for same amount of rules
     expect(testObj.stylesheet.rules.length).toBe(compObj.stylesheet.rules.length);
+});
+
+test('Throw ReferenceError when source does not exist.', async () => {
+    const testDir = './test/src/scss';
+    const outputFile = 'main.css';
+    const nonexistentFile = 'nonexistent.scss';
+
+    expect.assertions(1);
+
+    expect(scssBuilder.build(path.join(testDir, nonexistentFile), {
+        destination: tB.tempDir,
+        outputName: outputFile,
+    })).rejects.toThrowError(ReferenceError);
 });
