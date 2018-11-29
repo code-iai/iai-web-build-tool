@@ -21,21 +21,24 @@ test('Build a test css file', async () => {
 
     expect.assertions(4);
 
+    console.log(path.join(testDir, srcFile));
+
     await expect(scssBuilder.build(path.join(testDir, srcFile), {
-        dest: tempDir,
+        destination: tB.tempDir,
         outputName: outputFile,
     })).resolves.toBeTruthy();
 
-    expect(fs.existsSync(path.join(tempDir, outputFile))).toBe(true);
+    expect(fs.existsSync(path.join(tB.tempDir, outputFile))).toBe(true);
 
-    let testStr = fs.readFileSync(path.join(tempDir, outputFile), 'utf8');
-    let compStr = fs.readFileSync(path.join(compDir, compFile), 'utf8');
+    let testStr = fs.readFileSync(path.join(tB.tempDir, outputFile), 'utf8');
+    let compStr = fs.readFileSync(path.join(tB.compDir, compFile), 'utf8');
 
     let [testObj, compObj] = await Promise.all([
-        css.parse(testStr, { source: path.join(tempDir, outputFile) }),
-        css.parse(compStr, { source: path.join(compDir, compFile) })
+        css.parse(testStr, { source: path.join(tB.tempDir, outputFile) }),
+        css.parse(compStr, { source: path.join(tB.compDir, compFile) })
     ]);
 
+    // Check that file was not minified
     expect(testStr).toEqual(expect.stringContaining('\n'));
 
     // Only check for same amount of rules
@@ -46,33 +49,29 @@ test('Build a minified test css file', async () => {
     const testDir = './test/src/scss';
     const srcFile = 'base.scss';
     const outputFile = 'main.css';
-    const nonexistentFile = 'nonexistent.scss';
     const compFile = 'comp.css';
 
-    expect.assertions(5);
+    expect.assertions(4);
 
-    await expect(builder.scss.build(path.join(testDir, nonexistentFile), {
-        dest: tempDir,
-        outputName: outputFile,
-        minify: true,
-    })).rejects.toThrowError(ReferenceError);
+    console.log(path.join(testDir, srcFile));
 
-    await expect(builder.scss.build(path.join(testDir, srcFile), {
-        dest: tempDir,
+    await expect(scssBuilder.build(path.join(testDir, srcFile), {
+        destination: tB.tempDir,
         outputName: outputFile,
         minify: true,
     })).resolves.toBeTruthy();
 
-    expect(fs.existsSync(path.join(tempDir, outputFile))).toBe(true);
+    expect(fs.existsSync(path.join(tB.tempDir, outputFile))).toBe(true);
 
-    let testStr = fs.readFileSync(path.join(tempDir, outputFile), 'utf8');
-    let compStr = fs.readFileSync(path.join(compDir, compFile), 'utf8');
+    let testStr = fs.readFileSync(path.join(tB.tempDir, outputFile), 'utf8');
+    let compStr = fs.readFileSync(path.join(tB.compDir, compFile), 'utf8');
 
     let [testObj, compObj] = await Promise.all([
-        css.parse(testStr, { source: path.join(tempDir, outputFile) }),
-        css.parse(compStr, { source: path.join(compDir, compFile) })
+        css.parse(testStr, { source: path.join(tB.tempDir, outputFile) }),
+        css.parse(compStr, { source: path.join(tB.compDir, compFile) })
     ]);
 
+    // Check whether file was minified
     expect(testStr).toEqual(expect.not.stringContaining('\n'));
 
     // Only check for same amount of rules

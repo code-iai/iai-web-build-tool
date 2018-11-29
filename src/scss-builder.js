@@ -18,20 +18,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 const sass = require('gulp-sass');
 const cleanCSS = require('gulp-clean-css');
-const rename = require('gulp-rename');
 
 const builder = require('./utilities/builder');
 
-function minifyFile(piper, {
-    minify,
-} = {}) {
-    if (minify) {
-        return piper.pipe(cleanCSS({ compatibility: 'ie8' }));
-    }
-    return piper;
+function minifyFile(piper) {
+    return piper.pipe(cleanCSS({ compatibility: 'ie8' }));
 }
 
-function build(src, {
+function pipeSass(piper, {
+    minify,
+} = {}) {
+    const sassPiper = piper.pipe(sass());
+
+    return (minify)
+        ? minifyFile(sassPiper)
+        : sassPiper;
+}
+
+function build(source, {
     destination,
     outputName,
     minify = false,
@@ -42,7 +46,7 @@ function build(src, {
                 destination,
                 outputName,
                 outputExtension: '.css',
-                customCallbackFunction: minifyFile,
+                customCallbackFunction: pipeSass,
                 callbackFunctionData: {
                     minify,
                 },
