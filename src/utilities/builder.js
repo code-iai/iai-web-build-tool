@@ -51,29 +51,63 @@ function buildStandardDestinationPath(source) {
     return path.join(path.dirname(source), 'dest');
 }
 
-function pipeSource(source) {
+async function pipeSource(source) {
     return gulp.src(source);
 }
 
-function doSomething() {
-    throw Error('You have to implement the method doSomething!');
-}
-
-function tryToDoSomething(piper) {
-    try {
-        return doSomething(piper);
-    } catch (Error) {
-        console.log(Error.message);
-        return piper;
+async function executeCallbackFunction(piper, {
+    callbackFunction,
+    functionData,
+} = {}) {
+    if (typeof callbackFunction === 'function') {
+        // All callback functions have to take the piping object as parameter
+        // and return it
+        return callbackFunction(piper, functionData);
     }
+
+    throw new TypeError('You did not pass a callbackFunction!');
 }
 
-function build(source, {
+async function renameAndPipeDestination(piper, {
+    fileOutputName,
+    destination,
+} = {}) {
+    piper.on('error', log.error)
+        .pipe(rename(fileOutputName))
+        .pipe(gulp.dest(destination))
+        .on('finish', () => {
+            console.log('File was created');
+            return;
+        });
+}
+
+async function buildFile(source, {
+    destination,
+    fileOutputName,
+    customCallbackFunction,
+    callbackFunctionData,
+} = {}) {
+    let piper = await pipeSource(source);
+
+    piper = await executeCallbackFunction(piper, {
+        callbackFunction: customCallbackFunction,
+        functionData: callbackFunctionData,
+    });
+
+    await renameAndPipeDestination(piper, {
+        fileOutputName,
+        destination,
+    });
+}
+
+async function build(source, {
     destination,
     outputName,
     outputExtension,
+    customCallbackFunction,
+    callbackFunctionData,
 } = {}) {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
         fileExist.fileDoesNotExistThrowError(source);
 
         const fileOutputName = buildOutputFileName(source, {
@@ -83,20 +117,18 @@ function build(source, {
 
         const dest = destination || buildStandardDestinationPath(source);
 
-        let piper = pipeSource(source);
+        await buildFile(source, {
+            destination: dest,
+            fileOutputName,
+            customCallbackFunction,
+            callbackFunctionData,
+        });
 
-        piper = tryToDoSomething(piper);
+        // resolve('File was created');
 
-        piper.on('error', log.error)
-            .pipe(rename(fileOutputName))
-            .pipe(gulp.dest(dest))
-            .on('finish', () => {
-                resolve('File was created');
-            });
     });
 }
 
 module.exports = {
     build,
-    doSomething,
 };
