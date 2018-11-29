@@ -24,7 +24,7 @@ const path = require('path');
 const basename = require('./basename');
 const fileExist = require('./file-exist');
 
-function buildFileName(filename, {
+function buildFileNameNewExtension(filename, {
     extension = '',
 } = {}) {
     return (extension)
@@ -32,6 +32,19 @@ function buildFileName(filename, {
             newExtension: extension,
         })
         : basename.fileBasename(filename);
+}
+
+function buildOutputFileName(source, {
+    outputName,
+    extension,
+} = {}) {
+    return (outputName)
+        ? buildFileNameNewExtension(outputName, {
+            extension,
+        })
+        : buildFileNameNewExtension(source, {
+            extension,
+        });
 }
 
 function buildStandardDestinationPath(source) {
@@ -55,31 +68,6 @@ function tryToDoSomething(piper) {
     }
 }
 
-function pipeRenameAndToDestination(piper, {
-    fileOutputName,
-    destination,
-} = {}) {
-    piper.on('error', log.error)
-        .pipe(rename(fileOutputName))
-        .pipe(gulp.dest(destination));
-    //    .on('finish');
-}
-
-function buildFile({
-    source,
-    fileOutputName,
-    destination,
-} = {}) {
-    let piper = pipeSource(source);
-
-    piper = tryToDoSomething(piper);
-
-    pipeRenameAndToDestination(piper, {
-        fileOutputName,
-        destination,
-    });
-}
-
 function build(source, {
     destination,
     outputName,
@@ -88,23 +76,15 @@ function build(source, {
     return new Promise((resolve) => {
         fileExist.fileDoesNotExistThrowError(source);
 
-        const fileOutputName = (outputName)
-            ? buildFileName(outputName, {
-                extension: outputExtension,
-            })
-            : buildFileName(source, {
-                extension: outputExtension,
-            });
+        const fileOutputName = buildOutputFileName(source, {
+            outputName,
+            extension: outputExtension,
+        });
 
         const dest = destination || buildStandardDestinationPath(source);
 
-        // buildFile({
-        //     source,
-        //     destination,
-        //     fileOutputName,
-        // });
-
         let piper = pipeSource(source);
+
         piper = tryToDoSomething(piper);
 
         piper.on('error', log.error)

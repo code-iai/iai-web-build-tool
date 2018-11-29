@@ -27,7 +27,7 @@ function fileBasename(source, {
 }
 
 function fileBasenameNewExtension(source, {
-    newExtension = '',
+    newExtension,
 } = {}) {
     return path.format({
         name: path.basename(source, path.extname(source)),
