@@ -19,20 +19,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 const nunjucks = require('gulp-nunjucks');
 const builder = require('./utilities/builder');
 
+function compileNunjucks(piper) {
+    return piper.pipe(nunjucks.compile());
+}
+
 function build(source, {
     destination = `${source}/dest`,
     outputName = '',
 } = {}) {
-    return new Promise((resolve) => {
-        builder.doSomething = function (piper) {
-            return piper.pipe(nunjucks.compile());
-        };
-
-        builder.build(source, {
-            destination,
-            outputName,
-            outputExtension: '.html',
-        });
+    return new Promise(async (resolve, reject) => {
+        try{
+            await builder.build(source, {
+                destination,
+                outputName,
+                outputExtension: '.html',
+                customCallbackFunction: compileNunjucks,
+            });
+        }catch(Error){
+            reject(Error);
+        }
 
         resolve('HTML-File was created');
     });
