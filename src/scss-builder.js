@@ -52,6 +52,7 @@ function build(source, {
                 },
             });
         }catch(Error){
+            console.log(Error.message);
             reject(Error);
         }
 

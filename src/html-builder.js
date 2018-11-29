@@ -36,6 +36,7 @@ function build(source, {
                 customCallbackFunction: compileNunjucks,
             });
         }catch(Error){
+            console.log(Error.message);
             reject(Error);
         }
 

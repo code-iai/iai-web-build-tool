@@ -1,12 +1,15 @@
+const fs = require('fs');
+const path = require('path');
+
 const jsBuilder = require('../src/js-builder');
-const testBase = require('test-base');
+const tB = require('./test-base');
 
 beforeEach(() => {
-    testBase.createTempDir();
+    tB.createTempDir();
 });
 
 afterEach(() => {
-    testBase.deleteTempDir();
+    tB.deleteTempDir();
 });
 
 test('Build a test js file', async () => {
@@ -14,25 +17,18 @@ test('Build a test js file', async () => {
     const srcFile = 'base.js';
     const outputFile = 'main.js';
     const outputFileMap = 'main.js.map';
-    const nonexistentFile = 'nonexistent.js';
 
-    expect.assertions(9);
+    expect.assertions(8);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(builder.js.build(path.join(testDir, nonexistentFile), {
-        dest: tempDir,
-        outputName: outputFile,
-        beStandalone: true,
-    })).rejects.toThrowError(ReferenceError);
-
-    await expect(builder.js.build(path.join(testDir, srcFile), {
-        dest: tempDir,
+    await expect(jsBuilder.build(path.join(testDir, srcFile), {
+        destination: tB.tempDir,
         outputName: outputFile,
         beStandalone: true,
     })).resolves.toBeTruthy();
 
-    expect(fs.existsSync(tempDir, outputFile)).toBe(true);
-    expect(fs.existsSync(tempDir, outputFileMap)).toBe(true);
+    expect(fs.existsSync(tB.tempDir, outputFile)).toBe(true);
+    expect(fs.existsSync(tB.tempDir, outputFileMap)).toBe(true);
 
     const testModule = require(`./temp/${outputFile}`);
 
@@ -50,29 +46,21 @@ test('Build a babeled test js file', async () => {
     const srcFile = 'base.js';
     const outputFile = 'main.js';
     const outputFileMap = 'main.js.map';
-    const nonexistentFile = 'nonexistent.js';
 
-    expect.assertions(10);
+    expect.assertions(9);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(builder.js.build(path.join(testDir, nonexistentFile), {
-        dest: tempDir,
-        outputName: outputFile,
-        useBabel: true,
-        beStandalone: true,
-    })).rejects.toThrowError(ReferenceError);
-
-    await expect(builder.js.build(path.join(testDir, srcFile), {
-        dest: tempDir,
+    await expect(jsBuilder.build(path.join(testDir, srcFile), {
+        destination: tB.tempDir,
         outputName: outputFile,
         useBabel: true,
         beStandalone: true,
     })).resolves.toBeTruthy();
 
-    expect(fs.existsSync(tempDir, outputFile)).toBe(true);
-    expect(fs.existsSync(tempDir, outputFileMap)).toBe(true);
+    expect(fs.existsSync(tB.tempDir, outputFile)).toBe(true);
+    expect(fs.existsSync(tB.tempDir, outputFileMap)).toBe(true);
 
-    let testStr = fs.readFileSync(path.join(tempDir, outputFile), 'utf8');
+    let testStr = fs.readFileSync(path.join(tB.tempDir, outputFile), 'utf8');
 
     expect(testStr).toEqual(expect.stringContaining(' '));
 
@@ -92,29 +80,21 @@ test('Build a uglified test js file', async () => {
     const srcFile = 'base.js';
     const outputFile = 'main.js';
     const outputFileMap = 'main.js.map';
-    const nonexistentFile = 'nonexistent.js';
 
-    expect.assertions(10);
+    expect.assertions(9);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(builder.js.build(path.join(testDir, nonexistentFile), {
-        dest: tempDir,
-        outputName: outputFile,
-        beStandalone: true,
-        useUglify: true,
-    })).rejects.toThrowError(ReferenceError);
-
-    await expect(builder.js.build(path.join(testDir, srcFile), {
-        dest: tempDir,
+    await expect(jsBuilder.build(path.join(testDir, srcFile), {
+        destination: tB.tempDir,
         outputName: outputFile,
         useUglify: true,
         beStandalone: true,
     })).resolves.toBeTruthy();
 
-    expect(fs.existsSync(tempDir, outputFile)).toBe(true);
-    expect(fs.existsSync(tempDir, outputFileMap)).toBe(true);
+    expect(fs.existsSync(tB.tempDir, outputFile)).toBe(true);
+    expect(fs.existsSync(tB.tempDir, outputFileMap)).toBe(true);
 
-    let testStr = fs.readFileSync(path.join(tempDir, outputFile), 'utf8');
+    let testStr = fs.readFileSync(path.join(tB.tempDir, outputFile), 'utf8');
 
     let lineBreakCount = (testStr.match(/\n/g) || []).length;
     // Two linebreaks are always included
@@ -130,4 +110,18 @@ test('Build a uglified test js file', async () => {
     expect(testModule.multiply(a, b)).toBe(a * b);
     expect(testModule.divide(a, b)).toBe(a / b);
     expect(testModule.helloWorld()).toBe('Hello World!');
+});
+
+test('Throw ReferenceError when source does not exist.', async () => {
+    const testDir = './test/src/js';
+    const outputFile = 'main.js';
+    const nonexistentFile = 'nonexistent.js';
+
+    expect.assertions(1);
+
+    expect(jsBuilder.build(path.join(testDir, nonexistentFile), {
+        destination: tB.tempDir,
+        outputName: outputFile,
+        beStandalone: true,
+    })).rejects.toThrowError(ReferenceError);
 });
