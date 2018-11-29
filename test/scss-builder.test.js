@@ -3,7 +3,7 @@ const path = require('path');
 
 const css = require('../node_modules/css');
 const scssBuilder = require('../src/scss-builder');
-const tB = require('test-base');
+const tB = require('./test-base');
 
 beforeEach(() => {
     tB.createTempDir();
@@ -17,12 +17,11 @@ test('Build a test css file', async () => {
     const testDir = './test/src/scss';
     const srcFile = 'base.scss';
     const outputFile = 'main.css';
-
     const compFile = 'comp.css';
 
-    expect.assertions(5);
+    expect.assertions(4);
 
-    await expect(builder.scss.build(path.join(testDir, srcFile), {
+    await expect(scssBuilder.build(path.join(testDir, srcFile), {
         dest: tempDir,
         outputName: outputFile,
     })).resolves.toBeTruthy();
@@ -80,7 +79,7 @@ test('Build a minified test css file', async () => {
     expect(testObj.stylesheet.rules.length).toBe(compObj.stylesheet.rules.length);
 });
 
-test('Throw ReferenceError when source does not exist.', async () => {
+test('Throw ReferenceError when source does not exist.', () => {
     const testDir = './test/src/scss';
     const outputFile = 'main.css';
     const nonexistentFile = 'nonexistent.scss';
