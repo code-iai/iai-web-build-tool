@@ -18,17 +18,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 const path = require('path');
 
-function fileBasename(source, {
-    noExtension = false,
-} = {}) {
-    if (noExtension) return path.basename(source, path.extname(source));
+function fileBasename(source, { noExtension = false } = {}) {
+    if (noExtension) {
+        return path.basename(source, path.extname(source));
+    }
 
     return path.basename(source);
 }
 
-function fileBasenameNewExtension(source, {
-    newExtension,
-} = {}) {
+function fileBasenameNewExtension(source, { newExtension } = {}) {
     return path.format({
         name: path.basename(source, path.extname(source)),
         ext: newExtension,
@@ -37,5 +35,5 @@ function fileBasenameNewExtension(source, {
 
 module.exports = {
     fileBasename,
-    fileBasenameNewExtension
+    fileBasenameNewExtension,
 };
