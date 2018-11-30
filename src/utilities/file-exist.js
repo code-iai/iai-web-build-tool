@@ -23,7 +23,9 @@ function existsSync(source) {
 }
 
 function fileDoesNotExistThrowError(source) {
-    if (!fs.existsSync(source)) throw ReferenceError(`Source File ${source} does not exist.`);
+    if (!fs.existsSync(source)) {
+        throw ReferenceError(`Source File ${source} does not exist.`);
+    }
 }
 
 module.exports = {
