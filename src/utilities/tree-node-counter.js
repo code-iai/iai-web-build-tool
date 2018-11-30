@@ -17,13 +17,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 
 function treeHasChildNodes(tree) {
-    if (!tree.childNodes) return false;
-    return true;
+    return !tree.childNodes;
 }
 
 function countNodesPreOrder(tree) {
-    if (tree === undefined) return 0;
-    if (!treeHasChildNodes(tree)) return 1;
+    if (tree === undefined) {
+        return 0;
+    }
+    else if (!treeHasChildNodes(tree)){
+        return 1;
+    }
 
     let nodeCount = 1;
 
