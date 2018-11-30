@@ -31,7 +31,7 @@ function count(tree) {
 
     let nodeCount = 1;
 
-    tree.childNodes.map(child => nodeCount += count(child));
+    tree.childNodes.forEach((child) => { nodeCount += count(child); });
 
     return nodeCount;
 }
