@@ -17,14 +17,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 
 function treeHasChildNodes(tree) {
-    return !tree.childNodes;
+    return tree.childNodes !== undefined;
 }
 
 function count(tree) {
     if (tree === undefined) {
         return 0;
     }
-    else if (!treeHasChildNodes(tree)){
+
+    if (!treeHasChildNodes(tree)) {
         return 1;
     }
 
