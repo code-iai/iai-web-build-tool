@@ -30,9 +30,7 @@ function count(tree) {
 
     let nodeCount = 1;
 
-    for (let i = 0; i < tree.childNodes.length; i += 1) {
-        nodeCount += count(tree.childNodes[i]);
-    }
+    tree.childNodes.map(child => nodeCount += count(child));
 
     return nodeCount;
 }
