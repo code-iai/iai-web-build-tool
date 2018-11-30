@@ -20,7 +20,7 @@ function treeHasChildNodes(tree) {
     return !tree.childNodes;
 }
 
-function countNodesPreOrder(tree) {
+function count(tree) {
     if (tree === undefined) {
         return 0;
     }
@@ -31,12 +31,12 @@ function countNodesPreOrder(tree) {
     let nodeCount = 1;
 
     for (let i = 0; i < tree.childNodes.length; i += 1) {
-        nodeCount += countNodesPreOrder(tree.childNodes[i]);
+        nodeCount += count(tree.childNodes[i]);
     }
 
     return nodeCount;
 }
 
 module.exports = {
-    countPreOrder: countNodesPreOrder,
+    countPreOrder: count,
 };
