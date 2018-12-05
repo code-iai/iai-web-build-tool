@@ -61,7 +61,7 @@ function pipeBrowserifyBabelUglify(piper, {
     useBabel = false,
     useUglify = false,
     beStandalone = false,
-} = {}){
+} = {}) {
     let b = resolveJSRequireDependencies(source, {
         outputName,
         beStandalone,
@@ -88,7 +88,7 @@ function build(source, {
     beStandalone = false,
 } = {}) {
     return new Promise(async (resolve, reject) => {
-        try{
+        try {
             await builder.build(source, {
                 destination,
                 outputName,
@@ -102,7 +102,7 @@ function build(source, {
                     beStandalone,
                 },
             });
-        }catch(Error){
+        } catch (Error) {
             // console.log(Error.message);
             reject(Error);
         }

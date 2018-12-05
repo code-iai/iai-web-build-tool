@@ -28,14 +28,14 @@ function build(source, {
     outputName,
 } = {}) {
     return new Promise(async (resolve, reject) => {
-        try{
+        try {
             await builder.build(source, {
                 destination,
                 outputName,
                 outputExtension: '.html',
                 customCallbackFunction: compileNunjucks,
             });
-        }catch(Error){
+        } catch (Error) {
             // console.log(Error.message);
             reject(Error);
         }

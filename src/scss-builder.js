@@ -41,7 +41,7 @@ function build(source, {
     minify = false,
 } = {}) {
     return new Promise(async (resolve, reject) => {
-        try{
+        try {
             await builder.build(source, {
                 destination,
                 outputName,
@@ -51,7 +51,7 @@ function build(source, {
                     minify,
                 },
             });
-        }catch(Error){
+        } catch (Error) {
             // console.log(Error.message);
             reject(Error);
         }
