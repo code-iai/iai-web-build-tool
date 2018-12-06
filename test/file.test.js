@@ -55,6 +55,12 @@ test('Throw no Error when file exists.', () => {
         existingFile.requiredExist();
     }).not.toThrowError(ReferenceError);
 });
+
+test('Should return the correct parent folder path', () => {
+    const parentFolderPath = existingFile.getParentFolderPath();
+    expect(parentFolderPath).toBe('test_folder');
+});
+
 function initMock() {
     fs.existsSync = jest.fn((filePath) => { return EXISTING_DUMMY_FILE === filePath });
 }

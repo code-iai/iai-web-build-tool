@@ -46,6 +46,10 @@ class File {
         const fileType = this.getFileType();
         return path.basename(this.filePath, fileType);
     }
+
+    getParentFolderPath() {
+        return path.dirname(this.filePath);
+    }
 }
 
 module.exports = File;
