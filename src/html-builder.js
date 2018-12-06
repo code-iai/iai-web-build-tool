@@ -23,10 +23,7 @@ function compileNunjucks(piper) {
     return piper.pipe(nunjucks.compile());
 }
 
-function build(source, {
-    destination,
-    outputName,
-} = {}) {
+function build(source, { destination, outputName } = {}) {
     return new Promise(async (resolve, reject) => {
         try {
             await builder.build(source, {
