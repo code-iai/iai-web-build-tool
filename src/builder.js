@@ -19,30 +19,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 const gulp = require('gulp');
 const rename = require('gulp-rename');
 const log = require('gulplog');
-const path = require('path');
-
-const basename = require('./utilities/basename');
-const fileExist = require('./utilities/file-exist');
-
-function buildFileNameNewExtension(filename, { extension } = {}) {
-    if (extension !== undefined) {
-        return basename.fileBasenameNewExtension(filename, { newExtension: extension });
-    }
-
-    return basename.fileBasename(filename);
-}
-
-function buildOutputFileName(source, { outputName, extension } = {}) {
-    if (outputName !== undefined) {
-        return buildFileNameNewExtension(outputName, { extension });
-    }
-
-    return buildFileNameNewExtension(source, { extension });
-}
-
-function buildStandardDestinationPath(source) {
-    return path.join(path.dirname(source), 'dest');
-}
+const File = require('./utilities/file');
 
 function pipeSource(source) {
     return gulp.src(source);
@@ -59,25 +36,21 @@ function executeCallbackFunction(piper, { callbackFunction, functionData } = {})
 }
 
 function build({
-    source,
-    destination,
-    outputName,
-    outputExtension,
+    sourceFilePath,
+    resultFilePath,
     customCallbackFunction,
     callbackFunctionData,
 } = {}) {
     return new Promise((resolve) => {
-        fileExist.fileDoesNotExistThrowError(source);
+        const sourceFile = new File(sourceFilePath);
+        const resultFile = new File(resultFilePath);
+        sourceFile.requiredExist();
 
-        const fileOutputName = buildOutputFileName(source, {
-            outputName,
-            extension: outputExtension,
-        });
-
-        const dest = destination || buildStandardDestinationPath(source);
+        const fileOutputName = resultFile.getBasename();
+        const dest = resultFile.getParentFolderPath();
 
         // Actual file building starts here
-        let piper = pipeSource(source);
+        let piper = pipeSource(sourceFilePath);
 
         piper = executeCallbackFunction(piper, {
             callbackFunction: customCallbackFunction,
