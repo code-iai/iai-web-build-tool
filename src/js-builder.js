@@ -25,7 +25,7 @@ const sourceStream = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 
 const basename = require('../src/utilities/basename');
-const builder = require('./utilities/builder');
+const builder = require('./builder');
 
 function resolveJSRequireDependencies(source, {
     outputName,

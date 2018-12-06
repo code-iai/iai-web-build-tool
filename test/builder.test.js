@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const builder = require('../src/utilities/builder');
+const builder = require('../src/builder');
 const basename = require('../src/utilities/basename');
 const tB = require('./test-base');
 
@@ -18,7 +18,7 @@ const source = './test/src/builder/something.txt';
 function callbackTestFunction(piper) {
     // console.log('I did something!');
     return piper;
-};
+}
 
 test('Build() throws ReferenceError when source is not valid.', () => {
     const doesNotExistFile = './test/src/builder/does-not-exist.txt';
@@ -43,7 +43,7 @@ test('Build a file with standard parameters.', async () => {
 
     await expect(builder.build(tempSource, {
         customCallbackFunction: callbackTestFunction,
-    })).resolves.toBeTruthy();;
+    })).resolves.toBeTruthy();
 
     const outputDest = path.join(path.dirname(tempSource), 'dest', basename.fileBasename(source));
 
@@ -77,7 +77,7 @@ test('Build a renamed file.', async () => {
         destination,
         outputName,
         customCallbackFunction: callbackTestFunction,
-    })).resolves.toBeTruthy();;
+    })).resolves.toBeTruthy();
 
     const outputDest = path.join(destination, basename.fileBasename(outputName));
 

@@ -17,7 +17,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 
 const nunjucks = require('gulp-nunjucks');
-const builder = require('./utilities/builder');
+const builder = require('./builder');
 
 function compileNunjucks(piper) {
     return piper.pipe(nunjucks.compile());

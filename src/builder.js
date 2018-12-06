@@ -21,8 +21,8 @@ const rename = require('gulp-rename');
 const log = require('gulplog');
 const path = require('path');
 
-const basename = require('./basename');
-const fileExist = require('./file-exist');
+const basename = require('./utilities/basename');
+const fileExist = require('./utilities/file-exist');
 
 function buildFileNameNewExtension(filename, {
     extension,
