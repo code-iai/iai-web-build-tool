@@ -27,10 +27,7 @@ const buffer = require('vinyl-buffer');
 const basename = require('../src/utilities/basename');
 const builder = require('./builder');
 
-function resolveJSRequireDependencies(source, {
-    outputName,
-    beStandalone = false,
-} = {}) {
+function resolveJSRequireDependencies(source, { outputName, beStandalone = false } = {}) {
     const standaloneName = (beStandalone && outputName)
         ? basename.fileBasename(outputName, {
             noExtension: true,
