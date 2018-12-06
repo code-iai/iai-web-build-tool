@@ -19,21 +19,22 @@ test('Build a test css file', async () => {
     const outputFile = 'main.css';
     const compFile = 'comp.css';
 
-    expect.assertions(4);
+    const sourceFilePath = path.join(testDir, srcFile);
+    const resultFilePath = path.join(tB.tempDir, outputFile);
+
 
     await expect(scssBuilder.build({
-        source: path.join(testDir, srcFile),
-        destination: tB.tempDir,
-        outputName: outputFile,
+        sourceFilePath,
+        resultFilePath,
     })).resolves.toBeTruthy();
 
-    expect(fs.existsSync(path.join(tB.tempDir, outputFile))).toBe(true);
+    expect(fs.existsSync(resultFilePath)).toBe(true);
 
-    let testStr = fs.readFileSync(path.join(tB.tempDir, outputFile), 'utf8');
+    let testStr = fs.readFileSync(resultFilePath, 'utf8');
     let compStr = fs.readFileSync(path.join(tB.compDir, compFile), 'utf8');
 
     let [testObj, compObj] = await Promise.all([
-        css.parse(testStr, { source: path.join(tB.tempDir, outputFile) }),
+        css.parse(testStr, { source: resultFilePath }),
         css.parse(compStr, { source: path.join(tB.compDir, compFile) })
     ]);
 
@@ -50,22 +51,22 @@ test('Build a minified test css file', async () => {
     const outputFile = 'main.css';
     const compFile = 'comp.css';
 
-    expect.assertions(4);
+    const sourceFilePath = path.join(testDir, srcFile);
+    const resultFilePath = path.join(tB.tempDir, outputFile);
 
     await expect(scssBuilder.build({
-        source: path.join(testDir, srcFile),
-        destination: tB.tempDir,
-        outputName: outputFile,
+        sourceFilePath,
+        resultFilePath,
         minify: true,
     })).resolves.toBeTruthy();
 
-    expect(fs.existsSync(path.join(tB.tempDir, outputFile))).toBe(true);
+    expect(fs.existsSync(resultFilePath)).toBe(true);
 
-    let testStr = fs.readFileSync(path.join(tB.tempDir, outputFile), 'utf8');
+    let testStr = fs.readFileSync(resultFilePath, 'utf8');
     let compStr = fs.readFileSync(path.join(tB.compDir, compFile), 'utf8');
 
     let [testObj, compObj] = await Promise.all([
-        css.parse(testStr, { source: path.join(tB.tempDir, outputFile) }),
+        css.parse(testStr, { source: resultFilePath }),
         css.parse(compStr, { source: path.join(tB.compDir, compFile) })
     ]);
 
@@ -81,11 +82,11 @@ test('Throw ReferenceError when source does not exist.', () => {
     const outputFile = 'main.css';
     const nonexistentFile = 'nonexistent.scss';
 
-    expect.assertions(1);
+    const sourceFilePath = path.join(testDir, nonexistentFile);
+    const resultFilePath = path.join(tB.tempDir, outputFile);
 
     expect(scssBuilder.build({
-        source: path.join(testDir, nonexistentFile),
-        destination: tB.tempDir,
-        outputName: outputFile,
+        sourceFilePath,
+        resultFilePath,
     })).rejects.toThrowError(ReferenceError);
 });

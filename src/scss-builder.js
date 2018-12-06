@@ -36,18 +36,15 @@ function pipeSass(piper, { minify = false } = {}) {
 }
 
 function build({
-    source,
-    destination,
-    outputName,
+    sourceFilePath,
+    resultFilePath,
     minify = false,
 } = {}) {
     return new Promise(async (resolve, reject) => {
         try {
             await builder.build({
-                source,
-                destination,
-                outputName,
-                outputExtension: '.css',
+                sourceFilePath,
+                resultFilePath,
                 customCallbackFunction: pipeSass,
                 callbackFunctionData: {
                     minify,
