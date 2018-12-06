@@ -25,21 +25,17 @@ function minifyFile(piper) {
     return piper.pipe(cleanCSS({ compatibility: 'ie8' }));
 }
 
-function pipeSass(piper, {
-    minify,
-} = {}) {
+function pipeSass(piper, { minify = false } = {}) {
     const sassPiper = piper.pipe(sass());
 
-    return (minify)
-        ? minifyFile(sassPiper)
-        : sassPiper;
+    if (minify) {
+        return minifyFile(sassPiper);
+    }
+
+    return sassPiper;
 }
 
-function build(source, {
-    destination,
-    outputName,
-    minify = false,
-} = {}) {
+function build(source, { destination, outputName, minify = false } = {}) {
     return new Promise(async (resolve, reject) => {
         try {
             await builder.build(source, {
