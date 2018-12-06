@@ -24,27 +24,20 @@ const path = require('path');
 const basename = require('./utilities/basename');
 const fileExist = require('./utilities/file-exist');
 
-function buildFileNameNewExtension(filename, {
-    extension,
-} = {}) {
-    return (extension)
-        ? basename.fileBasenameNewExtension(filename, {
-            newExtension: extension,
-        })
-        : basename.fileBasename(filename);
+function buildFileNameNewExtension(filename, { extension } = {}) {
+    if (extension !== undefined) {
+        return basename.fileBasenameNewExtension(filename, { newExtension: extension });
+    }
+
+    return basename.fileBasename(filename);
 }
 
-function buildOutputFileName(source, {
-    outputName,
-    extension,
-} = {}) {
-    return (outputName)
-        ? buildFileNameNewExtension(outputName, {
-            extension,
-        })
-        : buildFileNameNewExtension(source, {
-            extension,
-        });
+function buildOutputFileName(source, { outputName, extension } = {}) {
+    if (outputName !== undefined) {
+        return buildFileNameNewExtension(outputName, { extension });
+    }
+
+    return buildFileNameNewExtension(source, { extension });
 }
 
 function buildStandardDestinationPath(source) {
@@ -55,10 +48,7 @@ function pipeSource(source) {
     return gulp.src(source);
 }
 
-function executeCallbackFunction(piper, {
-    callbackFunction,
-    functionData,
-} = {}) {
+function executeCallbackFunction(piper, { callbackFunction, functionData } = {}) {
     if (typeof callbackFunction === 'function') {
         // All callback functions have to take the piping object as parameter
         // and return it
