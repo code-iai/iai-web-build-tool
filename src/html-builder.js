@@ -23,20 +23,18 @@ function compileNunjucks(piper) {
     return piper.pipe(nunjucks.compile());
 }
 
-async function buildHtml(source, destination, outputName) {
+async function buildHtml(sourceFilePath, resultFilePath) {
     await builder.build({
-        source,
-        destination,
-        outputName,
-        outputExtension: '.html',
+        sourceFilePath,
+        resultFilePath,
         customCallbackFunction: compileNunjucks,
     });
 }
 
-function build({ source, destination, outputName } = {}) {
+function build({ sourceFilePath, resultFilePath } = {}) {
     return new Promise(async (resolve, reject) => {
         try {
-            await buildHtml(source, destination, outputName);
+            await buildHtml(sourceFilePath, resultFilePath);
             resolve('HTML-File was created');
         } catch (error) {
             reject(error);

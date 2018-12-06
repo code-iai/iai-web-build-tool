@@ -20,6 +20,9 @@ test('Build a test html file.', async () => {
     const outputFile = 'main.html';
     const compFile = 'comp.html';
 
+    const sourceFilePath = path.join(testDir, srcFile);
+    const resultFilePath = path.join(tB.tempDir, outputFile);
+
     const textFromFinalFile =
         '<!DOCTYPE html>\n' +
         '<html lang="en">\n' +
@@ -28,15 +31,11 @@ test('Build a test html file.', async () => {
 
     expect.assertions(4);
 
-    await expect(htmlBuilder.build({
-        source: path.join(testDir, srcFile),
-        destination: tB.tempDir,
-        outputName: outputFile,
-    })).resolves.toBeTruthy();
+    await expect(htmlBuilder.build({ sourceFilePath, resultFilePath })).resolves.toBeTruthy();
 
-    expect(fs.existsSync(path.join(tB.tempDir, outputFile))).toBe(true);
+    expect(fs.existsSync(resultFilePath)).toBe(true);
 
-    let testStr = fs.readFileSync(path.join(tB.tempDir, outputFile), 'utf8');
+    let testStr = fs.readFileSync(resultFilePath, 'utf8');
     let compStr = fs.readFileSync(path.join(tB.compDir, compFile), 'utf8');
 
     // Check if resulting file contains some boilerplate code
@@ -56,12 +55,14 @@ test('Throw ReferenceError when source does not exist.', async () => {
     const outputFile = 'main.html';
     const nonexistentFile = 'nonexistent.njk';
 
+    const sourceFilePath = path.join(testDir, nonexistentFile);
+    const resultFilePath = path.join(tB.tempDir, outputFile);
+
     expect.assertions(1);
 
     expect(htmlBuilder.build({
-        source: path.join(testDir, nonexistentFile),
-        destination: tB.tempDir,
-        outputName: outputFile,
+        sourceFilePath,
+        resultFilePath,
     })).rejects.toThrowError(ReferenceError);
 });
 
