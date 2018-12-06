@@ -23,23 +23,26 @@ function compileNunjucks(piper) {
     return piper.pipe(nunjucks.compile());
 }
 
+async function buildHtml(source, destination, outputName) {
+    await builder.build(source, {
+        destination,
+        outputName,
+        outputExtension: '.html',
+        customCallbackFunction: compileNunjucks,
+    });
+}
+
 function build(source, { destination, outputName } = {}) {
     return new Promise(async (resolve, reject) => {
         try {
-            await builder.build(source, {
-                destination,
-                outputName,
-                outputExtension: '.html',
-                customCallbackFunction: compileNunjucks,
-            });
-        } catch (Error) {
-            // console.log(Error.message);
-            reject(Error);
+            await buildHtml(source, destination, outputName);
+            resolve('HTML-File was created');
+        } catch (error) {
+            reject(error);
         }
-
-        resolve('HTML-File was created');
     });
 }
+
 
 module.exports = {
     build,
