@@ -17,6 +17,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 
 const fs = require('fs');
+const path = require('path');
 
 class File {
     constructor(filePath) {
@@ -31,6 +32,19 @@ class File {
         if (!this.exists()) {
             throw ReferenceError(`Source File ${this.filePath} does not exist.`);
         }
+    }
+
+    getFileType() {
+        return path.extname(this.filePath);
+    }
+
+    getBasename() {
+        return path.basename(this.filePath);
+    }
+
+    getBasenameWithoutFileType() {
+        const fileType = this.getFileType();
+        return path.basename(this.filePath, fileType);
     }
 }
 
