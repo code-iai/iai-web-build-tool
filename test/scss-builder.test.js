@@ -21,7 +21,8 @@ test('Build a test css file', async () => {
 
     expect.assertions(4);
 
-    await expect(scssBuilder.build(path.join(testDir, srcFile), {
+    await expect(scssBuilder.build({
+        source: path.join(testDir, srcFile),
         destination: tB.tempDir,
         outputName: outputFile,
     })).resolves.toBeTruthy();
@@ -51,7 +52,8 @@ test('Build a minified test css file', async () => {
 
     expect.assertions(4);
 
-    await expect(scssBuilder.build(path.join(testDir, srcFile), {
+    await expect(scssBuilder.build({
+        source: path.join(testDir, srcFile),
         destination: tB.tempDir,
         outputName: outputFile,
         minify: true,
@@ -81,7 +83,8 @@ test('Throw ReferenceError when source does not exist.', () => {
 
     expect.assertions(1);
 
-    expect(scssBuilder.build(path.join(testDir, nonexistentFile), {
+    expect(scssBuilder.build({
+        source: path.join(testDir, nonexistentFile),
         destination: tB.tempDir,
         outputName: outputFile,
     })).rejects.toThrowError(ReferenceError);

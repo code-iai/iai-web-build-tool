@@ -28,7 +28,8 @@ test('Build a test html file.', async () => {
 
     expect.assertions(4);
 
-    await expect(htmlBuilder.build(path.join(testDir, srcFile), {
+    await expect(htmlBuilder.build({
+        source: path.join(testDir, srcFile),
         destination: tB.tempDir,
         outputName: outputFile,
     })).resolves.toBeTruthy();
@@ -57,7 +58,8 @@ test('Throw ReferenceError when source does not exist.', async () => {
 
     expect.assertions(1);
 
-    expect(htmlBuilder.build(path.join(testDir, nonexistentFile), {
+    expect(htmlBuilder.build({
+        source: path.join(testDir, nonexistentFile),
         destination: tB.tempDir,
         outputName: outputFile,
     })).rejects.toThrowError(ReferenceError);

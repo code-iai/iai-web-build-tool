@@ -21,7 +21,8 @@ test('Build a test js file', async () => {
     expect.assertions(8);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(jsBuilder.build(path.join(testDir, srcFile), {
+    await expect(jsBuilder.build({
+        source: path.join(testDir, srcFile),
         destination: tB.tempDir,
         outputName: outputFile,
         beStandalone: true,
@@ -50,7 +51,8 @@ test('Build a babeled test js file', async () => {
     expect.assertions(9);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(jsBuilder.build(path.join(testDir, srcFile), {
+    await expect(jsBuilder.build({
+        source: path.join(testDir, srcFile),
         destination: tB.tempDir,
         outputName: outputFile,
         useBabel: true,
@@ -84,7 +86,8 @@ test('Build a uglified test js file', async () => {
     expect.assertions(9);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(jsBuilder.build(path.join(testDir, srcFile), {
+    await expect(jsBuilder.build({
+        source: path.join(testDir, srcFile),
         destination: tB.tempDir,
         outputName: outputFile,
         useUglify: true,
@@ -119,7 +122,8 @@ test('Throw ReferenceError when source does not exist.', async () => {
 
     expect.assertions(1);
 
-    expect(jsBuilder.build(path.join(testDir, nonexistentFile), {
+    expect(jsBuilder.build({
+        source: path.join(testDir, nonexistentFile),
         destination: tB.tempDir,
         outputName: outputFile,
         beStandalone: true,

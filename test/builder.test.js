@@ -16,7 +16,6 @@ afterEach(() => {
 const source = './test/src/builder/something.txt';
 
 function callbackTestFunction(piper) {
-    // console.log('I did something!');
     return piper;
 }
 
@@ -25,13 +24,13 @@ test('Build() throws ReferenceError when source is not valid.', () => {
 
     expect.assertions(1);
 
-    expect(builder.build(doesNotExistFile)).rejects.toThrowError(ReferenceError);
+    expect(builder.build({source: doesNotExistFile})).rejects.toThrowError(ReferenceError);
 });
 
 test('Build() throws TypeError when no callback is passed.', () => {
     expect.assertions(1);
 
-    expect(builder.build(source)).rejects.toThrowError(TypeError);
+    expect(builder.build({source: source})).rejects.toThrowError(TypeError);
 });
 
 test('Build a file with standard parameters.', async () => {
@@ -41,7 +40,8 @@ test('Build a file with standard parameters.', async () => {
 
     fs.copyFileSync(source, tempSource);
 
-    await expect(builder.build(tempSource, {
+    await expect(builder.build({
+        source: tempSource,
         customCallbackFunction: callbackTestFunction,
     })).resolves.toBeTruthy();
 
@@ -55,7 +55,8 @@ test('Build a file to a certain destination.', async () => {
 
     expect.assertions(2);
 
-    await expect(builder.build(source, {
+    await expect(builder.build({
+        source,
         destination,
         customCallbackFunction: callbackTestFunction,
     })).resolves.toBeTruthy();
@@ -73,7 +74,8 @@ test('Build a renamed file.', async () => {
 
     expect.assertions(2);
 
-    await expect(builder.build(source, {
+    await expect(builder.build({
+        source,
         destination,
         outputName,
         customCallbackFunction: callbackTestFunction,
@@ -90,7 +92,8 @@ test('Build a file with new extension.', async () => {
 
     expect.assertions(2);
 
-    await expect(builder.build(source, {
+    await expect(builder.build({
+        source,
         destination,
         outputExtension: extension,
         customCallbackFunction: callbackTestFunction,
@@ -112,7 +115,8 @@ test('Build a renamed file with new extension.', async () => {
     expect.assertions(4);
 
     // Test with outputName
-    await expect(builder.build(source, {
+    await expect(builder.build({
+        source,
         destination,
         outputName,
         outputExtension: extension,
@@ -126,7 +130,8 @@ test('Build a renamed file with new extension.', async () => {
     expect(tB.fileExist.existsSync(outputDest)).toBe(true);
 
     // Test with outputNameNoExtension
-    await expect(builder.build(source, {
+    await expect(builder.build({
+        source,
         destination,
         outputName: outputNameNoExtension,
         outputExtension: extension,
@@ -154,7 +159,8 @@ test('Test callback with passed function parameters.', async () => {
 
     expect.assertions(3);
 
-    await expect(builder.build(source, {
+    await expect(builder.build({
+        source,
         destination,
         customCallbackFunction: callbackTestFunctionWriteFileWithParameters,
         callbackFunctionData: {

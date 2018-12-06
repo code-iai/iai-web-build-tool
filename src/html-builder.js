@@ -24,7 +24,8 @@ function compileNunjucks(piper) {
 }
 
 async function buildHtml(source, destination, outputName) {
-    await builder.build(source, {
+    await builder.build({
+        source,
         destination,
         outputName,
         outputExtension: '.html',
@@ -32,7 +33,7 @@ async function buildHtml(source, destination, outputName) {
     });
 }
 
-function build(source, { destination, outputName } = {}) {
+function build({ source, destination, outputName } = {}) {
     return new Promise(async (resolve, reject) => {
         try {
             await buildHtml(source, destination, outputName);

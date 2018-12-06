@@ -58,7 +58,8 @@ function executeCallbackFunction(piper, { callbackFunction, functionData } = {})
     throw new TypeError('You did not pass a callback function!');
 }
 
-function build(source, {
+function build({
+    source,
     destination,
     outputName,
     outputExtension,

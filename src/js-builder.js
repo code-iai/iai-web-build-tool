@@ -27,7 +27,7 @@ const buffer = require('vinyl-buffer');
 const basename = require('../src/utilities/basename');
 const builder = require('./builder');
 
-function resolveJSRequireDependencies(source, { outputName, beStandalone = false } = {}) {
+function resolveJSRequireDependencies({ source, outputName, beStandalone = false } = {}) {
     const standaloneName = (beStandalone && outputName)
         ? basename.fileBasename(outputName, {
             noExtension: true,
@@ -59,7 +59,8 @@ function pipeBrowserifyBabelUglify(piper, {
     useUglify = false,
     beStandalone = false,
 } = {}) {
-    let b = resolveJSRequireDependencies(source, {
+    let b = resolveJSRequireDependencies({
+        source,
         outputName,
         beStandalone,
     });
@@ -77,7 +78,8 @@ function pipeBrowserifyBabelUglify(piper, {
     return b.pipe(sourcemaps.write('./'));
 }
 
-function build(source, {
+function build({
+    source,
     destination,
     outputName,
     useBabel = false,
@@ -86,7 +88,8 @@ function build(source, {
 } = {}) {
     return new Promise(async (resolve, reject) => {
         try {
-            await builder.build(source, {
+            await builder.build({
+                source,
                 destination,
                 outputName,
                 outputExtension: '.js',

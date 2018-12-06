@@ -35,10 +35,16 @@ function pipeSass(piper, { minify = false } = {}) {
     return sassPiper;
 }
 
-function build(source, { destination, outputName, minify = false } = {}) {
+function build({
+    source,
+    destination,
+    outputName,
+    minify = false,
+} = {}) {
     return new Promise(async (resolve, reject) => {
         try {
-            await builder.build(source, {
+            await builder.build({
+                source,
                 destination,
                 outputName,
                 outputExtension: '.css',
