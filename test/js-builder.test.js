@@ -6,9 +6,8 @@ const testBase = require('./test-base');
 
 const TEST_DIR = './test/src/js';
 const EXISTING_SRC_FILE = 'base.js';
-const OUTPUT_FILE = 'main.js';
-
 const NOT_EXISTING_SRC_FILE = 'nonexistent.js';
+const OUTPUT_FILE = 'main.js';
 
 const NOT_EXISTING_SOURCE_FILE_PATH = path.join(TEST_DIR, NOT_EXISTING_SRC_FILE);
 const EXISTING_SOURCE_FILE_PATH = path.join(TEST_DIR, EXISTING_SRC_FILE);
