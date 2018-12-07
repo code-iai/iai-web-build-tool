@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const jsBuilder = require('../src/js-builder');
-const tB = require('./test-base');
+const testBase = require('./test-base');
 
 const TEST_DIR = './test/src/js';
 const EXISTING_SRC_FILE = 'base.js';
@@ -12,7 +12,7 @@ const NOT_EXISTING_SRC_FILE = 'nonexistent.js';
 
 const NOT_EXISTING_SOURCE_FILE_PATH = path.join(TEST_DIR, NOT_EXISTING_SRC_FILE);
 const EXISTING_SOURCE_FILE_PATH = path.join(TEST_DIR, EXISTING_SRC_FILE);
-const RESULT_FILE_PATH = path.join('.',tB.tempDir, OUTPUT_FILE);
+const RESULT_FILE_PATH = path.join('.',testBase.tempDir, OUTPUT_FILE);
 
 /*
 Since we are testing async code, it is required to count all assertions to make sure,
@@ -27,11 +27,11 @@ const NUM_ASSERTIONS_TOTAL_SHARED_TESTS =
     NUM_ASSERTIONS_TEST_BUILT_JS_MODULE + NUM_ASSERTIONS_TEST_JS_BUILDER_IS_SUCCESSFUL;
 
 beforeEach(() => {
-    tB.createTempDir();
+    testBase.createTempDir();
 });
 
 afterEach(() => {
-    tB.deleteTempDir();
+    testBase.deleteTempDir();
 });
 
 test('Build a test js file', async () => {
