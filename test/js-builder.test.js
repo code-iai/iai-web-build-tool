@@ -12,7 +12,7 @@ const NOT_EXISTING_SRC_FILE = 'nonexistent.js';
 
 const NOT_EXISTING_SOURCE_FILE_PATH = path.join(TEST_DIR, NOT_EXISTING_SRC_FILE);
 const EXISTING_SOURCE_FILE_PATH = path.join(TEST_DIR, EXISTING_SRC_FILE);
-const RESULT_FILE_PATH = path.join('.',testBase.tempDir, OUTPUT_FILE);
+const RESULT_FILE_PATH = path.join(testBase.tempDir, OUTPUT_FILE);
 
 /*
 Since we are testing async code, it is required to count all assertions to make sure,
