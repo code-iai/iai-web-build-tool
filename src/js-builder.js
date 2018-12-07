@@ -24,18 +24,20 @@ const reactify = require('reactify');
 const sourceStream = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 
-const basename = require('../src/utilities/basename');
 const builder = require('./builder');
+const File = require('./utilities/file');
 
-function resolveJSRequireDependencies({ source, outputName, beStandalone = false } = {}) {
-    const standaloneName = (beStandalone && outputName)
-        ? basename.fileBasename(outputName, {
-            noExtension: true,
-        })
-        : '';
+function getStandaloneName(resultFile) {
+    return resultFile.getBasenameWithoutFileType();
+}
+
+function resolveRequireDependencies({ sourceFilePath, resultFilePath, beStandalone = false } = {}) {
+    const resultFile = new File(resultFilePath);
+    const standaloneName = beStandalone ? getStandaloneName(resultFile) : '';
+    const outputName = resultFile.getBasename();
 
     const b = browserify({
-        entries: source,
+        entries: sourceFilePath,
         debug: true,
         // defining transforms here will avoid crashing your stream
         transform: [reactify],
@@ -53,15 +55,15 @@ function resolveJSRequireDependencies({ source, outputName, beStandalone = false
 }
 
 function pipeBrowserifyBabelUglify(piper, {
-    source,
-    outputName,
+    sourceFilePath,
+    resultFilePath,
     useBabel = false,
     useUglify = false,
     beStandalone = false,
 } = {}) {
-    let b = resolveJSRequireDependencies({
-        source,
-        outputName,
+    let b = resolveRequireDependencies({
+        sourceFilePath,
+        resultFilePath,
         beStandalone,
     });
 
@@ -79,9 +81,8 @@ function pipeBrowserifyBabelUglify(piper, {
 }
 
 function build({
-    source,
-    destination,
-    outputName,
+    sourceFilePath,
+    resultFilePath,
     useBabel = false,
     useUglify = false,
     beStandalone = false,
@@ -89,14 +90,12 @@ function build({
     return new Promise(async (resolve, reject) => {
         try {
             await builder.build({
-                source,
-                destination,
-                outputName,
-                outputExtension: '.js',
+                sourceFilePath,
+                resultFilePath,
                 customCallbackFunction: pipeBrowserifyBabelUglify,
                 callbackFunctionData: {
-                    source,
-                    outputName,
+                    sourceFilePath,
+                    resultFilePath,
                     useBabel,
                     useUglify,
                     beStandalone,
