@@ -24,7 +24,7 @@ afterEach(() => {
 });
 
 test('Build a test js file', async () => {
-    expect.assertions(8);
+    expect.assertions(7);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
     await expect(jsBuilder.build({
@@ -39,6 +39,7 @@ test('Build a test js file', async () => {
 
     let a = 10;
     let b = 5;
+
     expect(testModule.add(a, b)).toBe(a + b);
     expect(testModule.subtract(a, b)).toBe(a - b);
     expect(testModule.multiply(a, b)).toBe(a * b);
@@ -47,7 +48,7 @@ test('Build a test js file', async () => {
 });
 
 test('Build a babeled test js file', async () => {
-    expect.assertions(9);
+    expect.assertions(8);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
     await expect(jsBuilder.build({
@@ -59,10 +60,6 @@ test('Build a babeled test js file', async () => {
 
     expect(fs.existsSync(RESULT_FILE_PATH)).toBe(true);
 
-    let testStr = fs.readFileSync(RESULT_FILE_PATH, 'utf8');
-
-    expect(testStr).toEqual(expect.stringContaining(' '));
-
     const testModule = require(`./temp/${OUTPUT_FILE}`);
 
     let a = 10;
@@ -73,10 +70,14 @@ test('Build a babeled test js file', async () => {
     expect(testModule.multiply(a, b)).toBe(a * b);
     expect(testModule.divide(a, b)).toBe(a / b);
     expect(testModule.helloWorld()).toBe('Hello World!');
+
+    let testStr = fs.readFileSync(RESULT_FILE_PATH, 'utf8');
+
+    expect(testStr).toEqual(expect.stringContaining(' '));
 });
 
 test('Build a uglified test js file', async () => {
-    expect.assertions(9);
+    expect.assertions(8);
 
     // All js builds have to be standalone, because otherwise node js cannot execute them
     await expect(jsBuilder.build({
@@ -88,13 +89,6 @@ test('Build a uglified test js file', async () => {
 
     expect(fs.existsSync(EXISTING_SOURCE_FILE_PATH)).toBe(true);
 
-    let testStr = fs.readFileSync(RESULT_FILE_PATH, 'utf8');
-
-    let lineBreakCount = (testStr.match(/\n/g) || []).length;
-    // Two linebreaks are always included
-    // One for the sourcemap link and one as the final token
-    expect(lineBreakCount).toBeLessThanOrEqual(2);
-
     const testModule = require(`./temp/${OUTPUT_FILE}`);
 
     let a = 10;
@@ -104,10 +98,18 @@ test('Build a uglified test js file', async () => {
     expect(testModule.multiply(a, b)).toBe(a * b);
     expect(testModule.divide(a, b)).toBe(a / b);
     expect(testModule.helloWorld()).toBe('Hello World!');
+
+    let testStr = fs.readFileSync(RESULT_FILE_PATH, 'utf8');
+
+    let lineBreakCount = (testStr.match(/\n/g) || []).length;
+    // Two linebreaks are always included
+    // One for the sourcemap link and one as the final token
+    expect(lineBreakCount).toBeLessThanOrEqual(2);
 });
 
 test('Throw ReferenceError when source does not exist.', async () => {
     expect.assertions(1);
+
     await expect(jsBuilder.build({
         sourceFilePath: NOT_EXISTING_SOURCE_FILE_PATH,
         resultFilePath: RESULT_FILE_PATH,
