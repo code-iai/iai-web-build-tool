@@ -26,12 +26,7 @@ afterEach(() => {
 test('Build a test js file', async () => {
     expect.assertions(7);
 
-    // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(jsBuilder.build({
-        sourceFilePath: EXISTING_SOURCE_FILE_PATH,
-        resultFilePath: RESULT_FILE_PATH,
-        beStandalone: true,
-    })).resolves.toBeTruthy();
+    await testJsBuilderIsSuccessful({useUglify: false, useBabel: false});
 
     expect(fs.existsSync(RESULT_FILE_PATH)).toBe(true);
 
@@ -50,13 +45,8 @@ test('Build a test js file', async () => {
 test('Build a babeled test js file', async () => {
     expect.assertions(8);
 
-    // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(jsBuilder.build({
-        sourceFilePath: EXISTING_SOURCE_FILE_PATH,
-        resultFilePath: RESULT_FILE_PATH,
-        useBabel: true,
-        beStandalone: true,
-    })).resolves.toBeTruthy();
+
+    await testJsBuilderIsSuccessful({useUglify: false, useBabel: true});
 
     expect(fs.existsSync(RESULT_FILE_PATH)).toBe(true);
 
@@ -79,13 +69,7 @@ test('Build a babeled test js file', async () => {
 test('Build a uglified test js file', async () => {
     expect.assertions(8);
 
-    // All js builds have to be standalone, because otherwise node js cannot execute them
-    await expect(jsBuilder.build({
-        sourceFilePath: EXISTING_SOURCE_FILE_PATH,
-        resultFilePath: RESULT_FILE_PATH,
-        useUglify: true,
-        beStandalone: true,
-    })).resolves.toBeTruthy();
+    await testJsBuilderIsSuccessful({useUglify: true, useBabel: false});
 
     expect(fs.existsSync(EXISTING_SOURCE_FILE_PATH)).toBe(true);
 
@@ -116,3 +100,14 @@ test('Throw ReferenceError when source does not exist.', async () => {
         beStandalone: true,
     })).rejects.toThrowError(ReferenceError);
 });
+
+async function testJsBuilderIsSuccessful({ useUglify, useBabel }){
+    // All js builds have to be standalone, because otherwise node js cannot execute them
+    await expect(jsBuilder.build({
+        sourceFilePath: EXISTING_SOURCE_FILE_PATH,
+        resultFilePath: RESULT_FILE_PATH,
+        useUglify: useUglify,
+        useBabel: useBabel,
+        beStandalone: true,
+    })).resolves.toBeTruthy();
+}
