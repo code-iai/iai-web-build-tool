@@ -40,7 +40,7 @@ test('Build a file to a certain destination.', async () => {
         customCallbackFunction: callbackTestFunction,
     })).resolves.toBeTruthy();
 
-    expect(tB.fileExist.existsSync(RESULT_FILE_PATH)).toBe(true);
+    expect(fs.existsSync(RESULT_FILE_PATH)).toBe(true);
 });
 
 function callbackTestFunctionWriteFileWithParameters (piper, {
@@ -65,5 +65,5 @@ test('Test callback with passed function parameters.', async () => {
     })).resolves.toBeTruthy();
 
     // Check whether file was written by the callback function
-    expect(tB.fileExist.existsSync(resultFilePath)).toBe(true);
+    expect(fs.existsSync(resultFilePath)).toBe(true);
 });
