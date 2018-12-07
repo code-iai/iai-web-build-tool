@@ -7,14 +7,13 @@ const tB = require('./test-base');
 const TEST_DIR = './test/src/js';
 const EXISTING_SRC_FILE = 'base.js';
 const OUTPUT_FILE = 'main.js';
-const OUTPUT_FILE_MAP = 'main.js.map';
 
 const NOT_EXISTING_SRC_FILE = 'nonexistent.js';
 
 const NOT_EXISTING_SOURCE_FILE_PATH = path.join(TEST_DIR, NOT_EXISTING_SRC_FILE);
 const EXISTING_SOURCE_FILE_PATH = path.join(TEST_DIR, EXISTING_SRC_FILE);
 const RESULT_FILE_PATH = path.join('.',tB.tempDir, OUTPUT_FILE);
-const RESULT_FILE_MAP_PATH = path.join('.',tB.tempDir, OUTPUT_FILE_MAP);
+
 
 beforeEach(() => {
     tB.createTempDir();
@@ -35,7 +34,6 @@ test('Build a test js file', async () => {
     })).resolves.toBeTruthy();
 
     expect(fs.existsSync(RESULT_FILE_PATH)).toBe(true);
-    expect(fs.existsSync(RESULT_FILE_MAP_PATH)).toBe(true);
 
     const testModule = require(`./temp/${OUTPUT_FILE}`);
 
@@ -60,7 +58,6 @@ test('Build a babeled test js file', async () => {
     })).resolves.toBeTruthy();
 
     expect(fs.existsSync(RESULT_FILE_PATH)).toBe(true);
-    expect(fs.existsSync(RESULT_FILE_MAP_PATH)).toBe(true);
 
     let testStr = fs.readFileSync(RESULT_FILE_PATH, 'utf8');
 
@@ -90,7 +87,6 @@ test('Build a uglified test js file', async () => {
     })).resolves.toBeTruthy();
 
     expect(fs.existsSync(EXISTING_SOURCE_FILE_PATH)).toBe(true);
-    expect(fs.existsSync(RESULT_FILE_MAP_PATH)).toBe(true);
 
     let testStr = fs.readFileSync(RESULT_FILE_PATH, 'utf8');
 
