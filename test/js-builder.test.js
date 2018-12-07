@@ -14,6 +14,17 @@ const NOT_EXISTING_SOURCE_FILE_PATH = path.join(TEST_DIR, NOT_EXISTING_SRC_FILE)
 const EXISTING_SOURCE_FILE_PATH = path.join(TEST_DIR, EXISTING_SRC_FILE);
 const RESULT_FILE_PATH = path.join('.',tB.tempDir, OUTPUT_FILE);
 
+/*
+Since we are testing async code, it is required to count all assertions to make sure,
+that we are not skipping tests during running time.
+Since some test methods are shared through some unit tests, we defined global constants to keep
+track of the number of assertions in the defined shared test methods.
+*/
+
+const NUM_ASSERTIONS_TEST_JS_BUILDER_IS_SUCCESSFUL = 1;
+const NUM_ASSERTIONS_TEST_BUILT_JS_MODULE = 6;
+const NUM_ASSERTIONS_TOTAL_SHARED_TESTS =
+    NUM_ASSERTIONS_TEST_BUILT_JS_MODULE + NUM_ASSERTIONS_TEST_JS_BUILDER_IS_SUCCESSFUL;
 
 beforeEach(() => {
     tB.createTempDir();
@@ -24,14 +35,14 @@ afterEach(() => {
 });
 
 test('Build a test js file', async () => {
-    expect.assertions(7);
+    expect.assertions(NUM_ASSERTIONS_TOTAL_SHARED_TESTS);
 
     await testJsBuilderIsSuccessful({useUglify: false, useBabel: false});
     testBuiltJsModule();
 });
 
 test('Build a babeled test js file', async () => {
-    expect.assertions(8);
+    expect.assertions(NUM_ASSERTIONS_TOTAL_SHARED_TESTS + 1);
 
     await testJsBuilderIsSuccessful({useUglify: false, useBabel: true});
 
@@ -40,7 +51,7 @@ test('Build a babeled test js file', async () => {
 });
 
 test('Build a uglified test js file', async () => {
-    expect.assertions(8);
+    expect.assertions(NUM_ASSERTIONS_TOTAL_SHARED_TESTS + 1);
 
     await testJsBuilderIsSuccessful({useUglify: true, useBabel: false});
 
@@ -65,13 +76,14 @@ function testBuildJsModuleAndReadIt(){
     testBuiltJsModule();
     return fs.readFileSync(RESULT_FILE_PATH, 'utf8');
 }
+
 function testBuiltJsModule(){
     expect(fs.existsSync(EXISTING_SOURCE_FILE_PATH)).toBe(true);
 
     const testModule = require(`./temp/${OUTPUT_FILE}`);
+    const a = 10;
+    const b = 5;
 
-    let a = 10;
-    let b = 5;
     expect(testModule.add(a, b)).toBe(a + b);
     expect(testModule.subtract(a, b)).toBe(a - b);
     expect(testModule.multiply(a, b)).toBe(a * b);
