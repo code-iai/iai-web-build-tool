@@ -20,7 +20,7 @@ test('Should return file exist', () => {
     expect(existingFile.exists()).toBe(true);
 });
 
-test('Should return file exist', () => {
+test('Should return file does not exist', () => {
     expect(notExistingFile.exists()).toBe(false);
 });
 
