@@ -23,7 +23,6 @@ const browserify = require('browserify');
 const reactify = require('reactify');
 const sourceStream = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
-
 const builder = require('./builder');
 const File = require('./utilities/file');
 
