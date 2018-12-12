@@ -18,7 +18,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 const sass = require('gulp-sass');
 const cleanCSS = require('gulp-clean-css');
-
 const builder = require('./builder');
 
 function minifyFile(piper) {

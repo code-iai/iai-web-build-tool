@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-
 const builder = require('../src/builder');
 const tB = require('./test-base');
 

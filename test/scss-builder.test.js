@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-
 const css = require('../node_modules/css');
 const scssBuilder = require('../src/scss-builder');
 const tB = require('./test-base');

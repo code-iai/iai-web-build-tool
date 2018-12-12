@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-
 const parse5 = require('../node_modules/parse5');
 const htmlBuilder = require('../src/html-builder');
 const tB = require('./test-base');
