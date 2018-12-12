@@ -1,4 +1,5 @@
 jest.mock('fs');
+
 const fs = require('fs');
 const path = require('path');
 const File = require('../src/utilities/file');
