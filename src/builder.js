@@ -47,7 +47,7 @@ function build({
         sourceFile.requiredExist();
 
         const fileOutputName = resultFile.getBasename();
-        const dest = resultFile.getParentFolderPath();
+        const destination = resultFile.getParentFolderPath();
 
         // Actual file building starts here
         let piper = pipeSource(sourceFilePath);
@@ -59,7 +59,7 @@ function build({
 
         piper.on('error', log.error)
             .pipe(rename(fileOutputName))
-            .pipe(gulp.dest(dest))
+            .pipe(gulp.dest(destination))
             .on('finish', () => {
                 resolve('File was created');
             });
