@@ -1,21 +1,21 @@
 const fs = require('fs');
 const del = require('../node_modules/del');
 
-const tempDir = './test/temp';
-const compDir = './test/comp';
+const TEMP_DIR = './test/temp';
+const COMP_DIR = './test/comp';
 
 function createTempDir(){
     deleteTempDir();
-    fs.mkdirSync(tempDir);
+    fs.mkdirSync(TEMP_DIR);
 }
 
 function deleteTempDir(){
-    del.sync([tempDir], { force:true });
+    del.sync([TEMP_DIR], { force:true });
 }
 
 module.exports = {
-    tempDir,
-    compDir,
+    TEMP_DIR,
+    COMP_DIR,
     createTempDir,
     deleteTempDir,
 };

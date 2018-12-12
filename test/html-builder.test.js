@@ -21,7 +21,7 @@ test('Build a test html file.', async () => {
     const compFile = 'comp.html';
 
     const sourceFilePath = path.join(testDir, srcFile);
-    const resultFilePath = path.join(tB.tempDir, outputFile);
+    const resultFilePath = path.join(tB.TEMP_DIR, outputFile);
 
     const textFromFinalFile =
         '<!DOCTYPE html>\n' +
@@ -36,7 +36,7 @@ test('Build a test html file.', async () => {
     expect(fs.existsSync(resultFilePath)).toBe(true);
 
     let testStr = fs.readFileSync(resultFilePath, 'utf8');
-    let compStr = fs.readFileSync(path.join(tB.compDir, compFile), 'utf8');
+    let compStr = fs.readFileSync(path.join(tB.COMP_DIR, compFile), 'utf8');
 
     // Check if resulting file contains some boilerplate code
     expect(testStr.includes(textFromFinalFile)).toBe(true);
@@ -56,7 +56,7 @@ test('Throw ReferenceError when source does not exist.', async () => {
     const nonexistentFile = 'nonexistent.njk';
 
     const sourceFilePath = path.join(testDir, nonexistentFile);
-    const resultFilePath = path.join(tB.tempDir, outputFile);
+    const resultFilePath = path.join(tB.TEMP_DIR, outputFile);
 
     expect.assertions(1);
 

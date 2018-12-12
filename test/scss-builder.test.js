@@ -20,7 +20,7 @@ test('Build a test css file', async () => {
     const compFile = 'comp.css';
 
     const sourceFilePath = path.join(testDir, srcFile);
-    const resultFilePath = path.join(tB.tempDir, outputFile);
+    const resultFilePath = path.join(tB.TEMP_DIR, outputFile);
 
 
     await expect(scssBuilder.build({
@@ -31,11 +31,11 @@ test('Build a test css file', async () => {
     expect(fs.existsSync(resultFilePath)).toBe(true);
 
     let testStr = fs.readFileSync(resultFilePath, 'utf8');
-    let compStr = fs.readFileSync(path.join(tB.compDir, compFile), 'utf8');
+    let compStr = fs.readFileSync(path.join(tB.COMP_DIR, compFile), 'utf8');
 
     let [testObj, compObj] = await Promise.all([
         css.parse(testStr, { source: resultFilePath }),
-        css.parse(compStr, { source: path.join(tB.compDir, compFile) })
+        css.parse(compStr, { source: path.join(tB.COMP_DIR, compFile) })
     ]);
 
     // Check that file was not minified
@@ -52,7 +52,7 @@ test('Build a minified test css file', async () => {
     const compFile = 'comp.css';
 
     const sourceFilePath = path.join(testDir, srcFile);
-    const resultFilePath = path.join(tB.tempDir, outputFile);
+    const resultFilePath = path.join(tB.TEMP_DIR, outputFile);
 
     await expect(scssBuilder.build({
         sourceFilePath,
@@ -63,11 +63,11 @@ test('Build a minified test css file', async () => {
     expect(fs.existsSync(resultFilePath)).toBe(true);
 
     let testStr = fs.readFileSync(resultFilePath, 'utf8');
-    let compStr = fs.readFileSync(path.join(tB.compDir, compFile), 'utf8');
+    let compStr = fs.readFileSync(path.join(tB.COMP_DIR, compFile), 'utf8');
 
     let [testObj, compObj] = await Promise.all([
         css.parse(testStr, { source: resultFilePath }),
-        css.parse(compStr, { source: path.join(tB.compDir, compFile) })
+        css.parse(compStr, { source: path.join(tB.COMP_DIR, compFile) })
     ]);
 
     // Check whether file was minified
@@ -83,7 +83,7 @@ test('Throw ReferenceError when source does not exist.', () => {
     const nonexistentFile = 'nonexistent.scss';
 
     const sourceFilePath = path.join(testDir, nonexistentFile);
-    const resultFilePath = path.join(tB.tempDir, outputFile);
+    const resultFilePath = path.join(tB.TEMP_DIR, outputFile);
 
     expect(scssBuilder.build({
         sourceFilePath,
