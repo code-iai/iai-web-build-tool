@@ -51,12 +51,6 @@ test('Get file type', () => {
     expect(fileType).toBe(FILE_TYPE);
 });
 
-test('Throw no Error when file exists.', () => {
-    expect(() => {
-        existingFile.requiredExist();
-    }).not.toThrowError(ReferenceError);
-});
-
 test('Should return the correct parent folder path', () => {
     const parentFolderPath = existingFile.getParentFolderPath();
     expect(parentFolderPath).toBe('test_folder');
