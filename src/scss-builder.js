@@ -46,9 +46,7 @@ function build({
                 sourceFilePath,
                 resultFilePath,
                 customCallbackFunction: pipeSass,
-                callbackFunctionData: {
-                    minify,
-                },
+                callbackFunctionData: { minify },
             });
         } catch (Error) {
             // console.log(Error.message);
