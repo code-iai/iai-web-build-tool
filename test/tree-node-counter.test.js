@@ -1,6 +1,6 @@
 const treeNodeCounter = require('../src/utilities/tree-node-counter');
 
-const tree = {
+const TREE = {
     childNodes: [
         child1 = {
             childNodes: [
@@ -16,7 +16,8 @@ const tree = {
         } ,
     ],
 };
-const emptyTree = {};
+
+const EMPTY_TREE = {};
 
 test('Empty parameter should return 0 as child node count.', () => {
     expect(treeNodeCounter.countPreOrder()).toBe(0);
@@ -24,6 +25,6 @@ test('Empty parameter should return 0 as child node count.', () => {
 
 test('Return tree child node count.', () => {
     // Empty object equals a root node
-    expect(treeNodeCounter.countPreOrder(emptyTree)).toBe(1);
-    expect(treeNodeCounter.countPreOrder(tree)).toBe(7);
-})
+    expect(treeNodeCounter.countPreOrder(EMPTY_TREE)).toBe(1);
+    expect(treeNodeCounter.countPreOrder(TREE)).toBe(7);
+});
