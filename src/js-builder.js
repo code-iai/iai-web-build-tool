@@ -53,6 +53,24 @@ function resolveRequireDependencies({ sourceFilePath, resultFilePath, beStandalo
         .pipe(sourcemaps.init({ loadMaps: true }));
 }
 
+function babelifyFile({ piper, useBabelify = false } = {}) {
+    if (useBabelify) {
+        return piper.pipe(babel({
+            presets: ['env'],
+        }));
+    }
+
+    return piper;
+}
+
+function uglifyFile({ piper, useUglify = false } = {}) {
+    if (useUglify) {
+        return piper.pipe(uglify());
+    }
+
+    return piper;
+}
+
 function pipeBrowserifyBabelUglify(piper, {
     sourceFilePath,
     resultFilePath,
@@ -66,15 +84,9 @@ function pipeBrowserifyBabelUglify(piper, {
         beStandalone,
     });
 
-    if (useBabel || useUglify) {
-        b = b.pipe(babel({
-            presets: ['env'],
-        }));
-    }
+    b = babelifyFile({ piper: b, useBabelify: (useBabel || useUglify) });
 
-    if (useUglify) {
-        b = b.pipe(uglify());
-    }
+    b = uglifyFile({ piper: b, useUglify });
 
     return b.pipe(sourcemaps.write('./'));
 }
