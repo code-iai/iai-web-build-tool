@@ -19,12 +19,12 @@ function callbackTestFunction(piper) {
     return piper;
 }
 
-test('Build() throws ReferenceError when source is not valid.', () => {
+test('Throw ReferenceError when source is not valid', () => {
     const sourceFilePath = './test/src/builder/does-not-exist.txt';
     expect(builder.build({sourceFilePath})).rejects.toThrowError(ReferenceError);
 });
 
-test('Build() throws TypeError when no callback is passed.', () => {
+test('Throw TypeError when no callback is passed', () => {
     expect(builder.build({
         sourceFilePath:SOURCE_FILE_PATH,
         resultFilePath:DESTINATION_FOLDER_PATH,
@@ -32,7 +32,7 @@ test('Build() throws TypeError when no callback is passed.', () => {
 });
 
 
-test('Build a file to a certain destination.', async () => {
+test('Build a file to a certain destination', async () => {
     await expect(builder.build({
         sourceFilePath: SOURCE_FILE_PATH,
         resultFilePath: RESULT_FILE_PATH,
@@ -50,7 +50,7 @@ function callbackTestFunctionWriteFileWithParameters (piper, {
     return piper;
 }
 
-test('Test callback with passed function parameters.', async () => {
+test('Build a file with callback function', async () => {
     const resultFilePath = path.join(DESTINATION_FOLDER_PATH, 'somefile.txt');
 
     await expect(builder.build({

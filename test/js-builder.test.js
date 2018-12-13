@@ -48,7 +48,7 @@ test('Build a babeled test js file', async () => {
     expect(testStr).toEqual(expect.stringContaining(' '));
 });
 
-test('Build a uglified test js file', async () => {
+test('Build an uglified test js file', async () => {
     expect.assertions(NUM_ASSERTIONS_TOTAL_SHARED_TESTS + 1);
 
     await testJsBuilderIsSuccessful({useUglify: true, useBabel: false});

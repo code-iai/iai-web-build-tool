@@ -18,11 +18,11 @@ const TREE = {
     ],
 };
 
-test('Empty parameter should return 0 as child node count.', () => {
+test('Return 0 as child node count with empty parameters', () => {
     expect(treeNodeCounter.countPreOrder()).toBe(0);
 });
 
-test('Return tree child node count.', () => {
+test('Return tree child node count', () => {
     // Empty object equals a root node
     expect(treeNodeCounter.countPreOrder(EMPTY_TREE)).toBe(1);
     expect(treeNodeCounter.countPreOrder(TREE)).toBe(7);

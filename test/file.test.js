@@ -16,11 +16,11 @@ const notExistingFile = new File(NOT_EXISTING_DUMMY_FILE);
 
 initMock();
 
-test('Should return file exist', () => {
+test('Return file exists', () => {
     expect(existingFile.exists()).toBe(true);
 });
 
-test('Should return file does not exist', () => {
+test('Return file does not exist', () => {
     expect(notExistingFile.exists()).toBe(false);
 });
 
@@ -51,7 +51,7 @@ test('Get file type', () => {
     expect(fileType).toBe(FILE_TYPE);
 });
 
-test('Should return the correct parent folder path', () => {
+test('Return the correct parent folder path', () => {
     const parentFolderPath = existingFile.getParentFolderPath();
     expect(parentFolderPath).toBe('test_folder');
 });
