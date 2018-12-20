@@ -1,19 +1,26 @@
 {
   "name": "iai-web-build-tool",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "Builder Tool for Web-Files of the Institute of Artificial Intelligence, University Bremen.",
   "main": "index.js",
   "scripts": {
+    "commit": "git-cz",
     "lint": "eslint ./",
     "pretest": "npm run lint",
-    "test": "jest"
+    "test": "jest",
+    "semantic-release": "semantic-release"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "engines": {
     "node": ">=8.0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/code-iai/iai-web-build-tool.git"
+    "url": "https://github.com/code-iai/iai-web-build-tool.git"
   },
   "author": "Institute for Artificial Intelligence - University of Bremen",
   "license": "MIT",
@@ -31,14 +38,17 @@
     ]
   },
   "devDependencies": {
+    "commitizen": "^3.0.5",
     "css": "^2.2.4",
+    "cz-conventional-changelog": "^2.1.0",
     "del": "^3.0.0",
     "eslint": "^5.9.0",
     "eslint-config-openease": "^0.1.7",
     "eslint-plugin-import": "^2.14.0",
     "jest": "^23.6.0",
     "parse5": "^5.1.0",
-    "require-from-string": "^2.0.2"
+    "require-from-string": "^2.0.2",
+    "semantic-release": "^15.13.1"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
