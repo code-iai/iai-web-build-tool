@@ -5,7 +5,7 @@
         "node" : true,
         "jquery" : true
     },
-    "extends": "openease",
+    "extends": "@code-iai/openease",
     "globals": {
         "d3": false,
         "global": false
