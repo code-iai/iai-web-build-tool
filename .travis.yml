@@ -9,6 +9,9 @@ jobs:
   include:
     # Define the release stage that runs semantic-release
     - stage: release
+      branches:
+        only:
+          - master
       node_js: lts/*
       # Advanced: optionally overwrite your default `script` step to skip the tests
       script: skip
